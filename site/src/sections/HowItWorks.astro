@@ -1,0 +1,42 @@
+---
+import C from "../components/C.astro";
+import P from "../components/P.astro";
+import Section from "../components/Section.astro";
+import { card, figure } from "../lib/styles";
+
+const pill =
+  "flex h-10 items-center justify-center rounded-full bg-preview-bg px-4 font-mono text-lg leading-none font-medium whitespace-nowrap shadow-custom select-none";
+const op =
+  "flex size-10 shrink-0 items-center justify-center rounded-full bg-preview-bg font-mono text-lg leading-none text-gray-1100 shadow-custom select-none";
+const beats = ["glide", "settle", "press", "release"];
+---
+
+<Section id="how" title="How it works">
+  <P>
+    Every step is a small piece of hand motion. A click isn't a jump cut: the cursor travels there in a
+    slight arc, rests for a beat so your eye catches up, presses, and lets go.
+  </P>
+  <figure class={figure}>
+    <div class={card}>
+      <p class="flex w-full flex-col items-center justify-center gap-4 py-16 sm:flex-row sm:gap-2">
+        {
+          beats.map((b, i) => (
+            <>
+              {i > 0 && <span class={op}>→</span>}
+              <span class={pill}>{b}</span>
+            </>
+          ))
+        }
+      </p>
+    </div>
+  </figure>
+  <P>
+    The press fires real <C>pointerdown</C>, <C>mousedown</C>, <C>pointerup</C>, <C>mouseup</C> and <C>click</C> events
+    on the element, so your app's own handlers run. Typing writes through the native value setter and fires{" "}
+    <C>input</C>, so React and Vue controlled fields update too.
+  </P>
+  <P>
+    The camera is a transform on the stage's only child. The cursor lives inside it, so it scales with the zoom and stays
+    on its target while the camera moves.
+  </P>
+</Section>

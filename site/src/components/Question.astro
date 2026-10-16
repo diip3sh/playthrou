@@ -1,0 +1,12 @@
+---
+import P from "./P.astro";
+
+interface Props {
+  q: string;
+}
+---
+
+<div class="mt-8 first-of-type:mt-0">
+  <h3 class="font-[550] text-gray-1200">{Astro.props.q}</h3>
+  <P class="mt-1"><slot /></P>
+</div>

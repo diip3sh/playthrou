@@ -58,7 +58,7 @@ Or attach to something you already render: `usePlaythru(ref, script, options)`.
 | `zoom(target?)` | Pushes the camera in on an element (or the last target). |
 | `zoomOut()` | Pulls the camera back. |
 | `wait(ms)` | Holds. |
-| `run(fn)` | Runs your own code as a step. |
+| `run(fn)` | Runs your own code as a step, with no pause after it. |
 | `reset(fn)` | Runs before every pass, to restore app state. Typed fields restore themselves. |
 
 Targets are a selector (scoped to the stage) or an element. They resolve when the step runs, so you can target things earlier steps created.
@@ -88,8 +88,8 @@ The numbers are the product. Each one is a decision you no longer have to make.
 | Press | 90 ms down, cursor at 84% | A real click is 60 to 120 ms. The squeeze makes it readable at video frame rates. |
 | Ripple | 560 ms | Long enough to see in a 30 fps recording, gone before the next action. |
 | Typing | 48 ms + up to 42 ms jitter, +150 ms after punctuation | Around 120 to 140 wpm: fast enough to not bore you, uneven enough to look human. It's seeded, so every loop types identically. |
-| Zoom | 1050 ms; target fills 50% of the stage; scale clamped to 1.3 to 2.2× | Below 1.3× a zoom looks like a mistake. Above 2.2× you lose where you are. |
-| Follow | pan when the target is within 16% of an edge | While zoomed in, the camera keeps the action in frame without chasing every move. |
+| Zoom | 1050 ms; target fills 50% of the stage; scale clamped to 1.3 to 2.2× | Below 1.3× a zoom looks like a mistake. Above 2.2× you lose where you are. If the target can't fit in 95% of the stage at 1.3×, as on a phone, the camera stays out. |
+| Follow | pan only when the target is within 8% of an edge, and only enough to bring it 22% in | While zoomed in, the camera keeps the action in frame without chasing every move or recentering on it. |
 | Gap | 240 ms between steps | Sequential actions should read as separate. |
 | Hold | 1.9 s on the final state | The payoff needs to land before the loop. |
 | Loop | glide home and zoom out, 240 ms fade, reset, 380 ms fade in | It reads as a cut, not a glitch. |
@@ -102,6 +102,15 @@ The numbers are the product. Each one is a decision you no longer have to make.
 - **Pausable clock.** Everything runs on one frame clock, so hover, scrolling it off screen, or a background tab freezes it mid-motion, and it resumes exactly where it was.
 - **Reduced motion.** With `prefers-reduced-motion`, the cursor jumps instead of gliding, the camera never moves, and loops cut without fades.
 - **The stage.** Your stage gets `overflow: hidden`. Its single child becomes the "scene" that the camera moves. If there are several children, they're wrapped (and unwrapped on `destroy()`).
+
+## Website
+
+The docs site lives in `site/`. It's Astro and Tailwind only, built the same way as the concentric docs, with an orange accent.
+
+```sh
+npm run build          # build the library first; the site imports it from ..
+cd site && npm install && npm run dev
+```
 
 ## Develop
 

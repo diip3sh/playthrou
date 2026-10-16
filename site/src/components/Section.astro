@@ -1,0 +1,26 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  id: string;
+  title: string;
+}
+
+const { id, title } = Astro.props;
+---
+
+<section id={id} aria-labelledby={`${id}-title`} class="flow scroll-mt-20">
+  <h2 id={`${id}-title`} class="mt-20 mb-5 flex scroll-mt-20 items-center gap-3 font-[550] text-gray-1200">
+    <a href={`#${id}`} class="group relative -ml-7 pl-7 text-left before:absolute before:-inset-1 before:content-['']">
+      <span
+        aria-hidden="true"
+        class="absolute top-1/2 left-0 flex size-6 -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100 group-focus-visible:opacity-100"
+      >
+        <Icon name="link" class="mb-px size-4 text-gray-1000" />
+      </span>
+      {title}
+    </a>
+    <span aria-hidden="true" class="h-px flex-1 bg-gray-400"></span>
+  </h2>
+  <slot />
+</section>

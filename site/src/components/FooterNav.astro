@@ -1,0 +1,19 @@
+---
+import { NPM, REPO } from "../lib/links";
+
+const item = "group flex max-w-40 flex-col gap-1 text-sm select-none sm:max-w-80";
+const label = "font-medium text-gray-1100 transition-colors duration-200 ease-out group-hover:text-gray-1200";
+const title =
+  "w-full font-medium text-pretty text-gray-1200 underline decoration-transparent underline-offset-3 transition-colors duration-200 ease-out group-hover:decoration-gray-1100";
+---
+
+<nav aria-label="Project links" class="mt-16 flex w-full items-center justify-between border-t border-gray-300 pt-12">
+  <a class:list={[item, "items-start"]} href={NPM}>
+    <span class={label}>Package</span>
+    <span class={title}>playthru on npm</span>
+  </a>
+  <a class:list={[item, "items-end text-right"]} href={REPO}>
+    <span class={label}>Source</span>
+    <span class={title}>MIT licensed on GitHub</span>
+  </a>
+</nav>

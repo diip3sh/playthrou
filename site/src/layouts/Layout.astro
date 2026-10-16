@@ -1,0 +1,71 @@
+---
+import "@fontsource-variable/geist-mono";
+import geistMonoLatin from "@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url";
+import "../styles.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** For pages that shouldn't be indexed or shared, such as the 404 page. */
+  noindex?: boolean;
+}
+
+const {
+  title = "playthru: product demos on your real UI",
+  description = "A cursor that glides, clicks and types across your real interface, and a camera that zooms in on what matters. Zero dependencies, about 4.6 KB.",
+  noindex = false,
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {
+      noindex ? (
+        <meta name="robots" content="noindex" />
+      ) : (
+        <>
+          <link rel="canonical" href={canonical} />
+          <link rel="sitemap" href="/sitemap.xml" />
+          <meta property="og:type" content="website" />
+          <meta property="og:site_name" content="playthru" />
+          <meta property="og:url" content={canonical} />
+          <meta property="og:title" content={title} />
+          <meta property="og:description" content={description} />
+          <meta name="twitter:card" content="summary" />
+          <meta name="twitter:title" content={title} />
+          <meta name="twitter:description" content={description} />
+        </>
+      )
+    }
+    <meta name="theme-color" content="#fcfcfc" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#101010" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- All code text, including the hero chips above the fold, uses Geist Mono; preloading avoids a swap from the fallback font. -->
+    <link rel="preload" href={geistMonoLatin} as="font" type="font/woff2" crossorigin />
+
+    <script is:inline>
+      // Runs before first paint so the stored or system theme never flashes.
+      (() => {
+        var stored = null;
+        try {
+          stored = localStorage.getItem("theme");
+        } catch {}
+        var dark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+    <script>
+      import "../scripts/theme";
+      import "../scripts/copy";
+    </script>
+  </body>
+</html>

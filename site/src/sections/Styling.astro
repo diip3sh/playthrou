@@ -1,0 +1,22 @@
+---
+import C from "../components/C.astro";
+import CodeCard from "../components/CodeCard.astro";
+import P from "../components/P.astro";
+import Section from "../components/Section.astro";
+---
+
+<Section id="styling" title="Hover and focus">
+  <P>
+    A fake cursor can't trigger <C>:hover</C>, and playthru never moves real keyboard focus, so it can't trigger{" "}
+    <C>:focus</C> either. Instead it marks the element under the cursor and the field being typed in.
+  </P>
+  <CodeCard
+    title="app.css"
+    lang="css"
+    code={`.button:hover,\n.button[data-playthru-hover] {\n  background: var(--button-hover);\n}\n\ninput[data-playthru-focus] {\n  outline: 2px solid var(--accent);\n}`}
+  />
+  <P>
+    In Tailwind, the attributes work as variants: <C>hover:bg-gray-200 data-playthru-hover:bg-gray-200</C>. The text caret
+    is drawn by playthru, in the field's own text color.
+  </P>
+</Section>

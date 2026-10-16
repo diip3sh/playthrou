@@ -1,0 +1,212 @@
+---
+/**
+ * The hero is a real playthru demo. The step chips light up as the script
+ * reaches them, and the camera checkbox rebuilds the script with or without
+ * zoom steps. Everything else is plain markup and Tailwind.
+ */
+import * as styles from "../lib/styles";
+import Checkbox from "./Checkbox.astro";
+import Chip from "./Chip.astro";
+
+const steps: Array<{ label: string; camera?: boolean }> = [
+  { label: "click" },
+  { label: "zoom", camera: true },
+  { label: "type" },
+  { label: "click" },
+  { label: "zoomOut", camera: true },
+  { label: "zoom", camera: true },
+];
+
+const active =
+  "transition-[color,background-color,border-color,opacity] duration-200 ease-out data-active:border-orange-400 data-active:bg-orange-50 data-active:text-orange-700 dark:data-active:border-orange-500/60 dark:data-active:bg-orange-950/60 dark:data-active:text-orange-400";
+const noCamera = "group-has-[#hd-camera:not(:checked)]/hero:opacity-35 group-has-[#hd-camera:not(:checked)]/hero:line-through";
+
+const issues = [
+  { id: "PT-12", title: "Billing shows a stale plan after upgrade", label: "Bug", dot: "bg-red-500", state: "half" },
+  { id: "PT-11", title: "Keyboard shortcut sheet", label: "Feature", dot: "bg-orange-500", state: "open" },
+  { id: "PT-9", title: "Tighten empty state spacing", label: "Polish", dot: "bg-emerald-500", state: "done" },
+  { id: "PT-7", title: "Export issues as CSV", label: "Feature", dot: "bg-orange-500", state: "open" },
+];
+
+const ring = {
+  open: "border-gray-800",
+  half: "border-amber-500 bg-[conic-gradient(var(--color-amber-500)_0_50%,transparent_0)]",
+  done: "border-orange-500 bg-orange-500",
+};
+
+const smallButton =
+  "interactive pressable inline-flex h-7 shrink-0 items-center rounded-full px-2.5 text-xs font-medium select-none";
+const row = "flex items-center gap-3 px-3 py-2.5 text-[13px]";
+const label =
+  "inline-flex h-5 items-center gap-1.5 rounded-full border border-gray-400 bg-gray-100 px-1.5 text-[11px] text-gray-1100";
+---
+
+<figure id="hero-demo" class:list={[styles.figure, "group/hero"]}>
+  <div class={styles.card}>
+    <div class:list={[styles.panel.base, styles.panel.top, "flex-wrap gap-1.5"]} aria-label="Script steps">
+      {
+        steps.map((s) => (
+          <Chip class:list={["h-6 text-xs", active, s.camera && noCamera]} data-step>
+            {s.label}
+          </Chip>
+        ))
+      }
+    </div>
+
+    <div id="hd-stage" class="h-[340px] w-full">
+      <div class="h-full px-4 py-8 sm:px-14">
+        <div
+          id="hd-app"
+          class="group/app mx-auto flex h-full max-w-[440px] flex-col overflow-hidden rounded-xl border border-gray-400 bg-preview-bg text-left"
+        >
+          <div class="flex items-center justify-between border-b border-gray-400 bg-gray-100 px-3 py-2">
+            <span class="text-[13px] font-[550] text-gray-1200">Issues</span>
+            <button
+              id="hd-new"
+              type="button"
+              class:list={[smallButton, "bg-gray-1200 text-gray-100 hover:opacity-85 data-playthru-hover:opacity-85"]}
+            >
+              New issue
+            </button>
+          </div>
+          <div
+            id="hd-composer"
+            class="hidden items-center gap-2 border-b border-gray-400 px-3 py-2 transition-colors duration-200 group-data-open/app:flex has-[[data-playthru-focus]]:bg-orange-50/70 dark:has-[[data-playthru-focus]]:bg-orange-950/30"
+          >
+            <input
+              id="hd-title"
+              placeholder="Issue title"
+              autocomplete="off"
+              aria-label="Issue title"
+              class="h-7 min-w-0 flex-1 bg-transparent text-[13px] font-medium text-gray-1200 outline-none placeholder:text-gray-900 data-playthru-focus:outline-none"
+            />
+            <button
+              id="hd-create"
+              type="button"
+              class:list={[smallButton, "bg-orange-500 text-white hover:bg-orange-600 data-playthru-hover:bg-orange-600"]}
+            >
+              Create
+            </button>
+          </div>
+          <ul id="hd-list" class="divide-y divide-gray-400">
+            {
+              issues.map((i) => (
+                <li class={row}>
+                  <span class:list={["size-3 shrink-0 rounded-full border-[1.5px]", ring[i.state as keyof typeof ring]]} />
+                  <span class="w-10 shrink-0 font-mono text-[11px] text-gray-1000">{i.id}</span>
+                  <span class="min-w-0 flex-1 truncate text-gray-1200">{i.title}</span>
+                  <span class={label}>
+                    <span class:list={["size-1.5 rounded-full", i.dot]} />
+                    {i.label}
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <template id="hd-row">
+      <li
+        data-new
+        class:list={[
+          row,
+          "bg-orange-50 transition-[opacity,translate,background-color] duration-500 ease-(--ease-smooth) starting:-translate-y-1 starting:opacity-0 dark:bg-orange-950/40",
+        ]}
+      >
+        <span class:list={["size-3 shrink-0 rounded-full border-[1.5px]", ring.open]}></span>
+        <span class="w-10 shrink-0 font-mono text-[11px] text-gray-1000" data-id></span>
+        <span class="min-w-0 flex-1 truncate text-gray-1200" data-title></span>
+        <span class={label}><span class="size-1.5 rounded-full bg-red-500"></span>Bug</span>
+      </li>
+    </template>
+
+    <div class:list={[styles.panel.base, styles.panel.bottom, "gap-6"]}>
+      <Checkbox id="hd-camera" label="Camera" checked />
+      <button
+        id="hd-toggle"
+        type="button"
+        class:list={[styles.button, "h-7 rounded-full px-2.5 text-[13px]"]}
+        aria-pressed="false"
+      >
+        Pause
+      </button>
+    </div>
+  </div>
+  <figcaption class={styles.caption}>
+    This is markup on the page, not a video.<span class="hidden pointer-fine:inline">
+      {" "}Hover it to take over.</span
+    >
+  </figcaption>
+</figure>
+
+<script>
+  import { playthru, type Playthru } from "playthru";
+
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+  const stage = $("hd-stage");
+  const app = $("hd-app");
+  const list = $("hd-list");
+  const title = $<HTMLInputElement>("hd-title");
+  const camera = $<HTMLInputElement>("hd-camera");
+  const toggle = $<HTMLButtonElement>("hd-toggle");
+  const template = $<HTMLTemplateElement>("hd-row");
+  const chips = Array.from($("hero-demo").querySelectorAll<HTMLElement>("[data-step]"));
+
+  /* ---- a tiny real app ---- */
+  let next = 13;
+  const close = () => delete app.dataset.open;
+  const reset = () => {
+    list.querySelectorAll("[data-new]").forEach((n) => n.remove());
+    title.value = "";
+    next = 13;
+    close();
+  };
+  const create = () => {
+    const text = title.value.trim();
+    if (!text) return;
+    const li = template.content.firstElementChild!.cloneNode(true) as HTMLElement;
+    li.querySelector("[data-id]")!.textContent = `PT-${next++}`;
+    li.querySelector("[data-title]")!.textContent = text;
+    list.prepend(li);
+    title.value = "";
+    close();
+  };
+  $("hd-new").addEventListener("click", () => (app.dataset.open = ""));
+  $("hd-create").addEventListener("click", create);
+  title.addEventListener("keydown", (e) => e.key === "Enter" && create());
+
+  /* ---- the demo ---- */
+  const mark = (i: number) => chips.forEach((c, j) => c.toggleAttribute("data-active", j === i));
+  let demo: Playthru | null = null;
+  let paused = false;
+
+  function build() {
+    demo?.destroy();
+    reset();
+    mark(-1);
+    // A paused visitor stays paused across rebuilds; Play starts it.
+    const d = playthru(stage, { autoplay: !paused });
+    d.run(() => mark(0)).click("#hd-new");
+    if (camera.checked) d.run(() => mark(1)).zoom("#hd-composer");
+    d.run(() => mark(2)).type("#hd-title", "Fix onboarding flicker on Safari");
+    d.run(() => mark(3)).click("#hd-create");
+    if (camera.checked) d.run(() => mark(4)).zoomOut().run(() => mark(5)).zoom("[data-new]");
+    d.run(() => mark(-1)).reset(() => {
+      reset();
+      mark(-1);
+    });
+    demo = d;
+  }
+
+  camera.addEventListener("change", build);
+  toggle.addEventListener("click", () => {
+    paused = !paused;
+    paused ? demo?.pause() : demo?.play();
+    toggle.textContent = paused ? "Play" : "Pause";
+    toggle.setAttribute("aria-pressed", String(paused));
+  });
+
+  build();
+</script>

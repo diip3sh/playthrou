@@ -1,0 +1,19 @@
+---
+import { checkbox } from "../lib/styles";
+import Icon from "./Icon.astro";
+
+interface Props {
+  /** Styles elsewhere on the page react to this input with `:has(#id:checked)`. */
+  id: string;
+  label: string;
+  checked?: boolean;
+}
+
+const { id, label, checked = false } = Astro.props;
+---
+
+<label class={checkbox.label}>
+  <input id={id} type="checkbox" checked={checked} class={checkbox.input} />
+  <span aria-hidden="true" class={checkbox.box}><Icon name="check" class={checkbox.icon} /></span>
+  <span class={checkbox.text}>{label}</span>
+</label>

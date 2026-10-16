@@ -1,0 +1,9 @@
+---
+import { paragraph } from "../lib/styles";
+
+interface Props {
+  class?: string;
+}
+---
+
+<p class:list={[paragraph, Astro.props.class]}><slot /></p>

@@ -1,0 +1,30 @@
+---
+import C from "../components/C.astro";
+import Question from "../components/Question.astro";
+import Section from "../components/Section.astro";
+---
+
+<Section id="faq" title="FAQ">
+  <Question q="Why not just record a video?">
+    A video is several megabytes, blurry on large screens, wrong in dark mode, and out of date the moment the product
+    changes. A playthru demo is your current UI, rendered by the browser at whatever size and theme the visitor has.
+  </Question>
+  <Question q="Does it ship any CSS?">
+    It injects one small style tag for the cursor, ripple and caret the first time it runs. There is nothing to import.
+  </Question>
+  <Question q="Will it steal focus or scroll the page?">
+    No. Real focus never moves, so a visitor typing elsewhere on the page is never interrupted. The demo also pauses when
+    it scrolls out of view and when the tab is in the background.
+  </Question>
+  <Question q="Can visitors use the demo?">
+    Yes. With <C>pauseOnHover</C>, which is on by default, a real pointer over the stage freezes the demo mid-motion and
+    hides the fake cursor. It picks up exactly where it was when the pointer leaves.
+  </Question>
+  <Question q="Which frameworks does it support?">
+    Anything that renders DOM. There is a React component and hook in <C>playthru/react</C>; everywhere else, call{" "}
+    <C>playthru()</C> after mount and <C>destroy()</C> on unmount.
+  </Question>
+  <Question q="How big is it?">
+    About 4.6 KB gzipped for the core and 0.3 KB for the React wrapper, with zero dependencies.
+  </Question>
+</Section>

@@ -1,0 +1,195 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:
+    "Geist Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
+  --ease-smooth: cubic-bezier(0.2, 0, 0, 1);
+
+  /* A neutral 12-step scale. Every step flips in dark mode (see the base layer). */
+  --color-gray-*: initial;
+  --color-gray-background: #fcfcfc;
+  --color-gray-100: #fcfcfc;
+  --color-gray-200: #f6f6f6;
+  --color-gray-300: #f0f0f0;
+  --color-gray-400: #e8e8e8;
+  --color-gray-500: #e0e0e0;
+  --color-gray-600: #d9d9d9;
+  --color-gray-700: #cecece;
+  --color-gray-800: #bbb;
+  --color-gray-900: #8d8d8d;
+  --color-gray-1000: #838383;
+  --color-gray-1100: #6f6f6f;
+  --color-gray-1200: #202020;
+  --color-preview-bg: #fff;
+  --color-preview-border: #e8e8e8;
+  --color-paragraph: #424242;
+
+  /* Resolved at runtime so the dark theme can swap them. */
+  --shadow-custom: var(--shadow-hairline);
+  --shadow-custom-hover: var(--shadow-hairline-hover);
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --shadow-hairline: 0 0 0 1px #0000000f, 0 1px 2px -1px #0000000f, 0 2px 4px 0 #0000000a;
+    --shadow-hairline-hover: 0 0 0 1px #00000014, 0 1px 2px -1px #00000014, 0 2px 4px 0 #0000000f;
+
+    /* Light tokens are dark enough for 4.5:1 on the white code background (checked by tests/a11y.spec.ts). */
+    --tk-plain: color(display-p3 0.039 0.039 0.039);
+    --tk-punct: color(display-p3 0.388 0.388 0.388);
+    --tk-comment: var(--color-gray-1100);
+    --tk-keyword: #d01a55;
+    --tk-tag: #c2410c;
+    --tk-attr: #047857;
+    --tk-prop: #0369a1;
+    --tk-var: #b45309;
+    --tk-string: #15803d;
+    --tk-number: #0e7490;
+    --tk-fn: color(display-p3 0.391 0.216 0.854);
+    --tk-component: color(display-p3 0.661 0.18 0.815);
+  }
+  [data-theme="dark"] {
+    color-scheme: dark;
+    --color-gray-background: #101010;
+    --color-gray-100: #111;
+    --color-gray-200: #191919;
+    --color-gray-300: #222;
+    --color-gray-400: #252525;
+    --color-gray-500: #313131;
+    --color-gray-600: #3a3a3a;
+    --color-gray-700: #484848;
+    --color-gray-800: #606060;
+    --color-gray-900: #6e6e6e;
+    --color-gray-1000: #7b7b7b;
+    --color-gray-1100: #b5b5b5;
+    --color-gray-1200: #eee;
+    --color-preview-bg: #0b0b0b;
+    --color-preview-border: #1f1f1f;
+    --color-paragraph: #dbdbdb;
+    --shadow-hairline: 0 0 0 1px #ffffff14;
+    --shadow-hairline-hover: 0 0 0 1px #ffffff21;
+
+    --tk-plain: color(display-p3 0.98 0.98 0.98);
+    --tk-punct: color(display-p3 0.388 0.388 0.388);
+    --tk-comment: var(--color-gray-1000);
+    --tk-keyword: color(display-p3 0.995 0.445 0.573);
+    --tk-tag: color(display-p3 1 0.567 0.409);
+    --tk-attr: color(display-p3 0.461 0.844 0.609);
+    --tk-var: color(display-p3 1 0.688 0.419);
+    --tk-string: color(display-p3 0.451 0.823 0.447);
+    --tk-number: color(display-p3 0.453 0.814 0.989);
+    --tk-fn: color(display-p3 0.616 0.445 1);
+    --tk-component: color(display-p3 0.829 0.435 0.954);
+  }
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-gray-background font-sans text-gray-1200 antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gray-1100);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  ::selection {
+    background-color: var(--color-gray-500);
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  .interactive {
+    transition-property: color, background-color, border-color, box-shadow, scale, opacity;
+    transition-duration: 200ms;
+    transition-timing-function: ease-out;
+  }
+  .pressable:active:not(:disabled) {
+    scale: 0.97;
+  }
+  /* Consecutive blocks of running text sit one line apart. */
+  .flow > :is(p, ul) + :is(p, ul) {
+    margin-top: 1.625rem;
+  }
+  .code-inline {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    padding: 2px 0.25rem;
+    border: 1px solid var(--color-preview-border);
+    border-radius: 0.375rem;
+    background-color: var(--color-preview-bg);
+  }
+  .article-link {
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-gray-600);
+    text-underline-offset: 3px;
+    transition:
+      color 200ms ease,
+      text-decoration-color 200ms ease;
+  }
+  .article-link:hover {
+    color: var(--color-gray-1200);
+    text-decoration-color: var(--color-gray-1100);
+  }
+}
+
+.tk-plain {
+  color: var(--tk-plain);
+}
+.tk-punct {
+  color: var(--tk-punct);
+}
+.tk-comment {
+  color: var(--tk-comment);
+}
+.tk-keyword {
+  color: var(--tk-keyword);
+}
+.tk-tag {
+  color: var(--tk-tag);
+}
+.tk-attr {
+  color: var(--tk-attr);
+}
+.tk-prop {
+  color: var(--tk-prop);
+}
+.tk-var {
+  color: var(--tk-var);
+}
+.tk-string {
+  color: var(--tk-string);
+}
+.tk-number {
+  color: var(--tk-number);
+}
+.tk-fn {
+  color: var(--tk-fn);
+}
+.tk-component {
+  color: var(--tk-component);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  ::before,
+  ::after {
+    /* biome-ignore-start lint/complexity/noImportantStyles: must beat every utility's transition and animation */
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    /* biome-ignore-end lint/complexity/noImportantStyles: must beat every utility's transition and animation */
+  }
+}

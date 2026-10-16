@@ -1,0 +1,47 @@
+---
+import { highlight, type Lang } from "../lib/highlight";
+import { codeCard, fileBadges } from "../lib/styles";
+import CopyButton from "./CopyButton.astro";
+import Icon from "./Icon.astro";
+
+interface Props {
+  /** What the copy button copies. Highlighted unless the default slot provides custom rendering. */
+  code: string;
+  title: string;
+  lang: Lang;
+}
+
+const { code, title, lang } = Astro.props;
+const badge = lang === "sh" || lang === "text" ? null : fileBadges[lang];
+const custom = Astro.slots.has("default");
+---
+
+<figure class={codeCard.root}>
+  <figcaption class={codeCard.header}>
+    <span class="flex min-w-0 items-center gap-2">
+      {
+        badge ? (
+          <svg viewBox="0 0 16 16" class="size-4 shrink-0" aria-hidden="true">
+            <rect x="1" y="1" width="14" height="14" rx="3.5" fill={badge.fill} />
+            <text
+              x="8"
+              y="11"
+              text-anchor="middle"
+              font-size={badge.text.length > 1 ? 7 : 9}
+              font-weight="700"
+              font-family="ui-sans-serif, system-ui, sans-serif"
+              fill="#fff"
+            >
+              {badge.text}
+            </text>
+          </svg>
+        ) : (
+          <Icon name="terminal" class="size-4 shrink-0 text-gray-1000" />
+        )
+      }
+      <span class={codeCard.title}>{title}</span>
+    </span>
+    <CopyButton text={code} label={`Copy ${title}`} />
+  </figcaption>
+  <pre class={codeCard.pre} tabindex="0"><code>{custom ? <slot /> : highlight(code, lang).map(([t, text]) => <span class={`tk-${t}`}>{text}</span>)}</code></pre>
+</figure>

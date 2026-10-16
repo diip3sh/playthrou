@@ -1,0 +1,36 @@
+---
+import FooterNav from "../components/FooterNav.astro";
+import Header from "../components/Header.astro";
+import Layout from "../layouts/Layout.astro";
+import Api from "../sections/Api.astro";
+import Faq from "../sections/Faq.astro";
+import Hero from "../sections/Hero.astro";
+import HowItWorks from "../sections/HowItWorks.astro";
+import Install from "../sections/Install.astro";
+import Limitations from "../sections/Limitations.astro";
+import Numbers from "../sections/Numbers.astro";
+import Styling from "../sections/Styling.astro";
+---
+
+<Layout>
+  <div class="mx-auto max-w-173 px-6 py-12 leading-relaxed sm:py-24">
+    <a
+      href="#main"
+      class="sr-only z-50 rounded-full bg-gray-1200 px-4 py-2 text-sm text-gray-100 focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+    >
+      Skip to content
+    </a>
+    <Header />
+    <main id="main" class="mt-24">
+      <Hero />
+      <HowItWorks />
+      <Install />
+      <Numbers />
+      <Api />
+      <Styling />
+      <Limitations />
+      <Faq />
+      <FooterNav />
+    </main>
+  </div>
+</Layout>

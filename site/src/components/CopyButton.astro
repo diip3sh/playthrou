@@ -1,0 +1,31 @@
+---
+import { copyButton, copySwap } from "../lib/styles";
+import Icon from "./Icon.astro";
+
+interface Props {
+  label: string;
+  /** Text to copy. Leave it out to copy the page URL. */
+  text?: string;
+  copiedLabel?: string;
+  /** Replaces the default look; keep `group` so the icons can swap. */
+  class?: string;
+  iconClass?: string;
+}
+
+const { label, text, copiedLabel, class: className = `${copyButton} size-7`, iconClass = "size-4" } = Astro.props;
+---
+
+<button
+  type="button"
+  aria-label={label}
+  data-copy={text}
+  data-copy-url={text === undefined ? "" : undefined}
+  data-copied-label={copiedLabel}
+  class={className}
+>
+  <span class:list={["relative", iconClass]} aria-hidden="true">
+    <Icon name="copy" class={copySwap.copy} />
+    <Icon name="check" class={copySwap.check} />
+  </span>
+  <span class="sr-only" aria-live="polite" data-copy-status></span>
+</button>

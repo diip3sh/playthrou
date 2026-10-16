@@ -1,0 +1,23 @@
+---
+import C from "../components/C.astro";
+import Li from "../components/Li.astro";
+import P from "../components/P.astro";
+import Section from "../components/Section.astro";
+---
+
+<Section id="limitations" title="Limitations">
+  <ul class="flex flex-col gap-2 text-paragraph">
+    <Li>The stage needs a single child. If it has several, playthru wraps them in a div and unwraps them on destroy.</Li>
+    <Li>Elements inside iframes, canvas and WebGL scenes can't be targeted, because the cursor needs a DOM element to aim at.</Li>
+    <Li>The drawn caret appears in single-line inputs only. Textareas and contenteditable get typed into without one.</Li>
+    <Li>
+      Clicks on links and submit buttons have their default action prevented, so a demo never navigates. Handle the click
+      in your code if it should do something.
+    </Li>
+    <Li>Your app state is yours to reset. Typed fields restore themselves; everything else goes in <C>reset()</C>.</Li>
+  </ul>
+  <P>
+    With <C>prefers-reduced-motion</C>, the cursor jumps instead of gliding, the camera stays still, and loops cut without
+    fades.
+  </P>
+</Section>

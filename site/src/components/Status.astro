@@ -1,0 +1,17 @@
+---
+import { status } from "../lib/styles";
+import Icon from "./Icon.astro";
+
+interface Props {
+  ok: boolean;
+  label: string;
+}
+
+const { ok, label } = Astro.props;
+---
+
+<span role="img" aria-label={label} class:list={[status.ring, ok ? status.ringOk : status.ringNo]}>
+  <span class:list={[status.dot, ok ? status.dotOk : status.dotNo]}>
+    {ok ? <Icon name="check" class="size-3" /> : <Icon name="x" class="size-2.5" />}
+  </span>
+</span>

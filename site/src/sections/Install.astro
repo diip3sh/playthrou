@@ -1,0 +1,31 @@
+---
+import C from "../components/C.astro";
+import CodeCard from "../components/CodeCard.astro";
+import P from "../components/P.astro";
+import Section from "../components/Section.astro";
+---
+
+<Section id="install" title="Install">
+  <P>Add the package. It has no dependencies and no stylesheet to import.</P>
+  <CodeCard title="Terminal" lang="sh" code="npm i playthru" />
+  <P>Wrap the UI you want to show in a stage, then write the script.</P>
+  <CodeCard
+    title="hero.html"
+    lang="html"
+    code={`<div id="hero" class="h-[520px]">\n  <div><!-- your real app UI --></div>\n</div>`}
+  />
+  <CodeCard
+    title="hero.ts"
+    lang="ts"
+    code={`import { playthru } from "playthru";\n\nplaythru("#hero")\n  .click("#new-issue")\n  .zoom("#composer")\n  .type("#title", "Fix onboarding flicker on Safari")\n  .click("#create")\n  .zoomOut()\n  .zoom(".issue:first-child")\n  .reset(() => app.reset());`}
+  />
+  <P>
+    It starts the first time the stage scrolls into view and loops forever. In React, import <C>Playthru</C> from{" "}
+    <C>playthru/react</C> and pass the same chain as a function.
+  </P>
+  <CodeCard
+    title="Hero.jsx"
+    lang="jsx"
+    code={`<Playthru\n  className="h-[520px]"\n  script={(d) => d.type("#todo", "Record the launch video").click("#add")}\n>\n  <TodoApp />\n</Playthru>`}
+  />
+</Section>

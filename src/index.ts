@@ -62,7 +62,9 @@ const N = {
   zoomFill: 0.5, // zoomed target fills half the stage
   zoomMin: 1.3,
   zoomMax: 2.2,
-  edge: 0.16, // when zoomed, pan if the cursor heads within 16% of an edge
+  zoomRoom: 0.95, // a zoomed target must fit in 95% of the stage, or the camera stays out
+  edge: 0.08, // when zoomed, pan only if the cursor heads within 8% of an edge
+  safe: 0.22, // ...and only far enough to bring it 22% in
   gap: 240, // ms between steps
   hold: 1900, // ms the finished state stays on screen
   fadeOut: 240,
@@ -76,25 +78,27 @@ const CURSOR_SVG =
   '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">' +
   '<path d="M4 2v16.4l4-3.8 2.6 6 2.9-1.3-2.6-5.9H16.4z" fill="#111" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>';
 
-const CSS = `
+/** In a layer declared first, so any page style (layered or not) beats these defaults. */
+const CSS = `@layer playthru{
 [data-playthru]{position:relative;overflow:hidden}
 [data-playthru-scene]{position:relative;transform-origin:0 0}
 .playthru-cursor{position:absolute;left:0;top:0;z-index:2147483646;pointer-events:none;width:24px;height:24px;
 transform-origin:${HOT_X}px ${HOT_Y}px;opacity:0;transition:opacity .2s ease;filter:drop-shadow(0 1px 1.5px rgb(0 0 0/.35))}
 .playthru-cursor svg{display:block}
-.playthru-ripple{position:absolute;z-index:2147483645;pointer-events:none;width:28px;height:28px;margin:-14px 0 0 -14px;
+.playthru-ripple{position:absolute;z-index:2147483645;pointer-events:none;width:28px;height:28px;
 border-radius:50%;background:rgb(128 128 128/.28);box-shadow:0 0 0 1.5px rgb(128 128 128/.45)}
 :where([data-playthru-focus]){outline:2px solid rgb(59 130 246/.55);outline-offset:1px}
 .playthru-caret{position:absolute;left:0;top:0;z-index:2147483645;pointer-events:none;width:1.5px;border-radius:1px;opacity:0}
 .playthru-caret.on{opacity:1;animation:playthru-blink 1.06s steps(1) infinite}
 @keyframes playthru-blink{50%{opacity:0}}
-`;
+}`;
 
 /* ------------------------------------------------------------------ */
 
 const CANCEL = Symbol("playthru.cancel");
 type Gen = number;
-type Step = (gen: Gen) => Promise<void>;
+/** `instant` steps (like `run`) are bookkeeping, so they get no beat after them. */
+type Step = ((gen: Gen) => Promise<void>) & { instant?: boolean };
 type Cam = { s: number; x: number; y: number };
 type Pt = { x: number; y: number };
 type Rect = { x: number; y: number; w: number; h: number };
@@ -120,7 +124,7 @@ function injectStyle() {
   const el = document.createElement("style");
   el.dataset.playthru = "";
   el.textContent = CSS;
-  document.head.appendChild(el);
+  document.head.prepend(el);
 }
 
 const isField = (el: Element): el is HTMLInputElement | HTMLTextAreaElement =>
@@ -262,9 +266,11 @@ class Engine implements Playthru {
   }
 
   run(fn: () => void | Promise<void>) {
-    this.steps.push(async () => {
+    const step: Step = async () => {
       await fn();
-    });
+    };
+    step.instant = true;
+    this.steps.push(step);
     return this;
   }
 
@@ -328,7 +334,7 @@ class Engine implements Playthru {
         this.showCursor(true);
         for (const step of this.steps) {
           await step(g);
-          await this.sleep(N.gap, g);
+          if (!step.instant) await this.sleep(N.gap, g);
         }
         await this.sleep(N.hold, g);
         if (!this.opts.loop) break;
@@ -446,7 +452,12 @@ class Engine implements Playthru {
   private fit(r: Rect, s?: number): Cam {
     const W = this.stage.clientWidth;
     const H = this.stage.clientHeight;
-    s ??= clamp(Math.min((W * N.zoomFill) / r.w, (H * N.zoomFill) / r.h), N.zoomMin, N.zoomMax);
+    if (s === undefined) {
+      const room = Math.min((W * N.zoomRoom) / r.w, (H * N.zoomRoom) / r.h);
+      // Below the minimum a zoom looks like a mistake, and above `room` it crops the target: skip it.
+      if (room < N.zoomMin) return { s: 1, x: 0, y: 0 };
+      s = Math.min(clamp(Math.min((W * N.zoomFill) / r.w, (H * N.zoomFill) / r.h), N.zoomMin, N.zoomMax), room);
+    }
     const SW = this.scene.offsetWidth;
     const SH = this.scene.offsetHeight;
     return {
@@ -509,8 +520,18 @@ class Engine implements Playthru {
       const vx = to.x * this.cam.s + this.cam.x;
       const vy = to.y * this.cam.s + this.cam.y;
       if (vx < W * N.edge || vx > W * (1 - N.edge) || vy < H * N.edge || vy > H * (1 - N.edge)) {
-        const dur = Math.max(this.glideMs(to), 700);
-        pan = this.camTo(this.fit({ x: to.x, y: to.y, w: 0, h: 0 }, this.cam.s), dur, g);
+        // Nudge, don't recenter: move the camera just enough to bring the target into the safe area.
+        const { s } = this.cam;
+        const SW = this.scene.offsetWidth;
+        const SH = this.scene.offsetHeight;
+        const nx = clamp(vx, W * N.safe, W * (1 - N.safe)) - vx;
+        const ny = clamp(vy, H * N.safe, H * (1 - N.safe)) - vy;
+        const next = {
+          s,
+          x: clamp(this.cam.x + nx, Math.min(0, W - SW * s), 0),
+          y: clamp(this.cam.y + ny, Math.min(0, H - SH * s), 0),
+        };
+        pan = this.camTo(next, Math.max(this.glideMs(to), 700), g);
       }
     }
 
@@ -582,8 +603,8 @@ class Engine implements Playthru {
     this.scene.append(r);
     const a = r.animate(
       [
-        { transform: "scale(.3)", opacity: 1 },
-        { transform: "scale(1.6)", opacity: 0 },
+        { transform: "translate(-50%,-50%) scale(.3)", opacity: 1 },
+        { transform: "translate(-50%,-50%) scale(1.6)", opacity: 0 },
       ],
       { duration: N.ripple, easing: "cubic-bezier(.2,.7,.3,1)", fill: "forwards" },
     );
