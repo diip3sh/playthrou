@@ -116,15 +116,6 @@ The numbers are the product. Each one is a decision you no longer have to make.
 - **Reduced motion.** With `prefers-reduced-motion`, the cursor jumps instead of gliding, the camera never moves, and loops cut without fades.
 - **The stage.** Your stage gets `overflow: hidden`. Its single child becomes the "scene" that the camera moves. If there are several children, they're wrapped (and unwrapped on `destroy()`).
 
-## Website
-
-The docs site lives in `site/`. It's Astro and Tailwind only, built the same way as the concentric docs, with an orange accent.
-
-```sh
-npm run build          # build the library first; the site imports it from ..
-cd site && npm install && npm run dev
-```
-
 ## Develop
 
 ```sh
