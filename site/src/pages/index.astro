@@ -2,6 +2,8 @@
 import FooterNav from "../components/FooterNav.astro";
 import Header from "../components/Header.astro";
 import Layout from "../layouts/Layout.astro";
+import { NPM, REPO } from "../lib/links";
+import pkg from "../../../package.json";
 import Api from "../sections/Api.astro";
 import Faq from "../sections/Faq.astro";
 import Hero from "../sections/Hero.astro";
@@ -21,9 +23,26 @@ const SECTIONS = [
   { id: "limitations", label: "Limitations" },
   { id: "faq", label: "FAQ" },
 ];
+
+// Facts an agent can verify without reading the page: what playthru is, where its code lives, its license.
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  name: "playthru",
+  description: pkg.description,
+  url: Astro.site?.href,
+  codeRepository: REPO,
+  programmingLanguage: "TypeScript",
+  runtimePlatform: "Web browser",
+  version: pkg.version,
+  license: "https://opensource.org/licenses/MIT",
+  keywords: pkg.keywords,
+  sameAs: [NPM],
+};
 ---
 
 <Layout>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="mx-auto max-w-173 px-6 py-12 leading-relaxed sm:py-24 print:p-0">
     <a
       href="#main"
