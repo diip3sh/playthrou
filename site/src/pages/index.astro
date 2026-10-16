@@ -9,7 +9,18 @@ import HowItWorks from "../sections/HowItWorks.astro";
 import Install from "../sections/Install.astro";
 import Limitations from "../sections/Limitations.astro";
 import Numbers from "../sections/Numbers.astro";
+import ScrollProgress from "../components/ScrollProgress";
 import Styling from "../sections/Styling.astro";
+
+const SECTIONS = [
+  { id: "how", label: "How it works" },
+  { id: "install", label: "Install" },
+  { id: "numbers", label: "The numbers" },
+  { id: "api", label: "API" },
+  { id: "styling", label: "Hover and focus" },
+  { id: "limitations", label: "Limitations" },
+  { id: "faq", label: "FAQ" },
+];
 ---
 
 <Layout>
@@ -32,5 +43,6 @@ import Styling from "../sections/Styling.astro";
       <Faq />
       <FooterNav />
     </main>
+    <ScrollProgress client:load sections={SECTIONS} className="print:hidden" />
   </div>
 </Layout>
