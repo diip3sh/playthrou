@@ -19,7 +19,10 @@ const STEPS: RefRow[] = [
   { code: ["wait(ms)"], desc: "Holds for a moment." },
   { code: ["run(fn)"], desc: "Runs your own code as a step, with no pause after it." },
   { code: ["reset(fn)"], desc: "Runs before every pass, to put your app back where it started." },
-  { code: ["play()", "pause()", "destroy()"], desc: "Controls. destroy() removes the cursor and restores the stage." },
+  { code: ["play()"], desc: "Starts the demo, or resumes it after pause(). With autoplay: false, this is how it starts." },
+  { code: ["pause()"], desc: "Freezes the demo mid-motion. play() picks it up exactly where it stopped." },
+  { code: ["destroy()"], desc: "Stops for good: removes the cursor and caret, and puts the stage and typed fields back." },
+  { code: ["playing"], desc: "true while the demo is moving, false while it's paused, hovered, off screen or not started." },
 ];
 
 const OPTIONS: RefRow[] = [

@@ -32,7 +32,7 @@ const titleId = `code-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
             <rect x="1" y="1" width="14" height="14" rx="3.5" fill={badge.fill} />
             <text
               x="8"
-              y="11"
+              y={badge.y}
               text-anchor="middle"
               font-size={badge.text.length > 1 ? 7 : 9}
               font-weight="700"

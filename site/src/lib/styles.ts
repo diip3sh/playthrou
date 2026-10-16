@@ -47,9 +47,13 @@ export const codeCard = {
   pre: "overflow-x-auto overscroll-x-contain p-3 font-mono text-[13px] leading-[1.625] text-kumo-strong focus-visible:-outline-offset-2",
 };
 
+/**
+ * `y` is each label's baseline, set so its ink (not its em box) is centered on the 16px square:
+ * `<>` sits low on the baseline and needs lifting more than letters do. Measured in bold system-ui.
+ */
 export const fileBadges = {
-  css: { fill: "#2563eb", text: "#" },
-  html: { fill: "#e34f26", text: "<>" },
-  jsx: { fill: "#087ea4", text: "JS" },
-  ts: { fill: "#3178c6", text: "TS" },
+  css: { fill: "#2563eb", text: "#", y: 11.2 },
+  html: { fill: "#e34f26", text: "<>", y: 10 },
+  jsx: { fill: "#087ea4", text: "JS", y: 10.5 },
+  ts: { fill: "#3178c6", text: "TS", y: 10.5 },
 };
