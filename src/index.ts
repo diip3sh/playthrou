@@ -143,6 +143,12 @@ function writeValue(el: Element, value: string, data: string | null) {
 
 const readValue = (el: Element) => (isField(el) ? el.value : el.textContent ?? "");
 
+/**
+ * Hidden or removed elements report a 0,0 box, and aiming at one sends the cursor to the corner.
+ * A visitor who takes over mid-demo can close or remove things, so every step checks before acting.
+ */
+const rendered = (el: Element) => el.isConnected && el.getClientRects().length > 0;
+
 /** Open menus, listboxes and popovers, found by the ARIA state every popup library sets on its trigger. */
 const OPEN_POPUP = '[aria-expanded="true"]:is([aria-haspopup]:not([aria-haspopup="false"]),[role="combobox"])';
 let popupQuery: string | undefined;
@@ -218,14 +224,17 @@ class Engine implements Playthru {
   /* ---------- public script API ---------- */
 
   move(target: Target) {
-    this.steps.push((g) => this.glideTo(target, g));
+    this.steps.push(async (g) => {
+      await this.glideTo(target, g);
+    });
     return this;
   }
 
   click(target?: Target) {
     this.steps.push(async (g) => {
-      if (target !== undefined) await this.glideTo(target, g);
-      await this.press(this.need(), g);
+      if (target !== undefined && !(await this.glideTo(target, g))) return;
+      const el = this.need();
+      if (rendered(el)) await this.press(el, g);
     });
     return this;
   }
@@ -235,10 +244,12 @@ class Engine implements Playthru {
     const text = b === undefined ? (a as string) : b;
     this.steps.push(async (g) => {
       if (target !== undefined) {
-        await this.glideTo(target, g);
+        if (!(await this.glideTo(target, g))) return;
+        if (!rendered(this.need())) return;
         await this.press(this.need(), g);
       }
-      await this.typeInto(this.need(), text, g);
+      const el = this.need();
+      if (rendered(el)) await this.typeInto(el, text, g);
     });
     return this;
   }
@@ -259,7 +270,7 @@ class Engine implements Playthru {
     this.steps.push(async (g) => {
       if (this.reduced) return;
       const el = target === undefined ? this.need() : this.find(target);
-      await this.camTo(this.fit(this.rect(el)), N.zoom, g);
+      if (rendered(el)) await this.camTo(this.fit(this.rect(el)), N.zoom, g);
     });
     return this;
   }
@@ -535,9 +546,11 @@ class Engine implements Playthru {
     this.cursor.style.opacity = on && !this.holds.has("hover") ? "1" : "0";
   }
 
-  private async glideTo(target: Target, g: Gen) {
+  /** Resolves `false`, skipping the step, when the target isn't on screen. */
+  private async glideTo(target: Target, g: Gen): Promise<boolean> {
     const el = this.find(target);
     await this.yieldToPage(g);
+    if (!rendered(el)) return false;
     if (this.last !== el) this.mark(null, "hover");
     this.last = el;
     this.showCursor(true);
@@ -572,6 +585,7 @@ class Engine implements Playthru {
     const c = this.toClient(to);
     for (const t of ["pointerover", "pointerenter", "mouseover", "mouseenter", "pointermove", "mousemove"]) this.fire(el, t, c);
     await this.sleep(N.settle, g);
+    return true;
   }
 
   private glideMs(to: Pt) {
@@ -683,6 +697,8 @@ class Engine implements Playthru {
       if (/[,.!?;:]/.test(prev)) ms += N.keyAfterPunct;
       await this.sleep(ms, g);
       await this.yieldToPage(g);
+      // The UI closed the field, or a visitor typed in it: stop rather than type over them.
+      if (!rendered(el) || readValue(el) !== value) break;
       el.dispatchEvent(new KeyboardEvent("keydown", { key: ch, bubbles: true, cancelable: true }));
       value += ch;
       writeValue(el, value, ch);
