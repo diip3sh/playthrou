@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>playthru: your hero demo, live</title>
+<style>
+  :root { --ink:#16161a; --mute:#6b6b76; --line:#e7e7ec; --soft:#f6f6f8; --accent:#5b5bd6; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:14px/1.45 -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif; color:var(--ink);
+    background: radial-gradient(1200px 600px at 50% -10%, #ececff 0%, #fafafa 55%) fixed; -webkit-font-smoothing: antialiased; }
+  .hero { max-width: 960px; margin: 0 auto; padding: 72px 24px 24px; text-align: center; }
+  .hero h1 { font-size: 40px; line-height: 1.1; letter-spacing: -0.03em; margin: 0 0 14px; font-weight: 650; }
+  .hero h1 span { color: var(--mute); }
+  .hero p { margin: 0 auto 22px; max-width: 540px; color: var(--mute); font-size: 15px; }
+  .install { display:inline-flex; gap:10px; align-items:center; padding:7px 8px 7px 14px; border:1px solid var(--line); background:#fff;
+    border-radius: 999px; font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; box-shadow: 0 1px 2px rgb(0 0 0/.04); }
+  .install b { font-weight: 500; }
+  .install em { font-style:normal; font-family: -apple-system, sans-serif; font-size:12px; color: var(--mute); background: var(--soft); padding: 3px 9px; border-radius: 999px; }
+
+  /* browser frame */
+  .frame { max-width: 920px; margin: 34px auto 18px; border-radius: 14px; background:#fff; border:1px solid var(--line);
+    box-shadow: 0 1px 1px rgb(0 0 0/.03), 0 12px 32px -8px rgb(20 20 50/.14), 0 40px 80px -30px rgb(20 20 50/.2); overflow: hidden; }
+  .bar { height: 40px; display:flex; align-items:center; gap:7px; padding: 0 14px; border-bottom:1px solid var(--line); background:#fbfbfc; }
+  .bar i { width:11px; height:11px; border-radius:50%; background:#e3e3e8; }
+  .bar .url { margin: 0 auto; font-size:12px; color: var(--mute); background:#f0f0f3; padding: 3px 60px; border-radius:6px; }
+  #stage { height: 520px; }
+
+  /* the app */
+  .app { display:grid; grid-template-columns: 200px 1fr; height: 520px; background:#fff; position: relative; }
+  .side { border-right:1px solid var(--line); background: var(--soft); padding: 14px 10px; }
+  .ws { display:flex; align-items:center; gap:8px; font-weight:600; padding: 4px 8px 14px; }
+  .ws i { width:20px; height:20px; border-radius:6px; background: linear-gradient(135deg,#7c7cf0,#4a4ac4); }
+  .nav { display:flex; align-items:center; gap:8px; padding: 6px 8px; border-radius: 7px; color:#3b3b44; }
+  .nav.on { background:#fff; box-shadow: 0 0 0 1px var(--line); font-weight: 500; }
+  .nav u { margin-left:auto; text-decoration:none; color:var(--mute); font-size:12px; }
+  .main { display:flex; flex-direction:column; min-width:0; }
+  .head { display:flex; align-items:center; padding: 14px 20px; border-bottom:1px solid var(--line); }
+  .head h2 { font-size:15px; margin:0; font-weight:600; }
+  .btn { margin-left:auto; display:inline-flex; align-items:center; gap:6px; border:0; border-radius:8px; padding: 7px 12px;
+    font: 500 13px -apple-system, sans-serif; background: var(--ink); color:#fff; cursor:pointer; transition: transform .12s, background .15s; }
+  .btn:hover, .btn[data-playthru-hover] { background:#000; }
+  .btn:active { transform: scale(.97); }
+  .list { overflow:auto; }
+  .row { display:grid; grid-template-columns: 18px 64px 1fr auto 22px; align-items:center; gap:12px; padding: 11px 20px; border-bottom:1px solid #f1f1f4; }
+  .row .st { width:14px; height:14px; border-radius:50%; border: 1.5px solid #b9b9c4; }
+  .row .st.prog { border-color:#e2a03f; background: conic-gradient(#e2a03f 0 50%, transparent 0); }
+  .row .st.done { border-color: var(--accent); background: var(--accent); }
+  .row .id { color: var(--mute); font-size:12px; font-variant-numeric: tabular-nums; }
+  .row .ti { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .chip { font-size:11.5px; padding: 2px 8px; border-radius:999px; border:1px solid var(--line); color:#45454f; display:inline-flex; gap:5px; align-items:center; }
+  .chip::before { content:""; width:6px; height:6px; border-radius:50%; background: var(--c, #999); }
+  .av { width:22px; height:22px; border-radius:50%; background: linear-gradient(135deg,#f6c28b,#e88a6a); }
+  .row.is-new { animation: arrive .6s cubic-bezier(.2,.8,.2,1); background: #f7f7ff; }
+  @keyframes arrive { from { opacity:0; transform: translateY(-6px); background:#ececff; } }
+
+  /* composer */
+  .veil { position:absolute; inset:0; background: rgb(250 250 252/.6); backdrop-filter: blur(2px); display:grid; place-items:start center;
+    padding-top: 92px; opacity:0; pointer-events:none; transition: opacity .18s; }
+  .veil.open { opacity:1; pointer-events:auto; }
+  .composer { width: 460px; background:#fff; border:1px solid var(--line); border-radius: 12px; padding: 14px 16px 12px;
+    box-shadow: 0 20px 50px -12px rgb(20 20 50/.25); transform: translateY(6px) scale(.985); transition: transform .22s cubic-bezier(.2,.8,.2,1); }
+  .veil.open .composer { transform: none; }
+  .composer small { color: var(--mute); font-size:12px; }
+  .composer input { width:100%; border:0; outline:0; font: 600 16px -apple-system, sans-serif; padding: 8px 0 4px; color: var(--ink); }
+  .composer input::placeholder { color:#b4b4bf; }
+  .composer input[data-playthru-focus] { outline: 0; }
+  .composer textarea { width:100%; border:0; outline:0; resize:none; font: 13.5px -apple-system, sans-serif; color: var(--mute); height: 44px; padding:0; }
+  .labels { display:flex; gap:6px; padding: 8px 0 12px; border-bottom: 1px solid #f1f1f4; }
+  .labels button { font: 12px -apple-system, sans-serif; cursor:pointer; background:#fff; }
+  .labels button[aria-pressed="true"] { border-color: #c9c9f5; background:#f1f1ff; color: #3d3db8; }
+  .labels button:hover, .labels button[data-playthru-hover] { border-color:#cfcfd8; }
+  .foot { display:flex; padding-top: 10px; }
+  .foot .btn { background: var(--accent); }
+  .foot .btn:hover, .foot .btn[data-playthru-hover] { background:#4a4ac4; }
+
+  .note { text-align:center; color: var(--mute); font-size: 12.5px; padding-bottom: 60px; }
+  .note kbd { font: 11px ui-monospace, monospace; background:#fff; border:1px solid var(--line); border-radius:5px; padding: 1px 5px; }
+</style>
+</head>
+<body>
+  <section class="hero">
+    <h1>Your hero demo is a 6&nbsp;MB&nbsp;MP4.<br /><span>It should be your actual UI.</span></h1>
+    <p>playthru glides a cursor across your real interface, clicks, types, and zooms the camera in on what matters. Sharp at any size, loops forever, ~4&nbsp;KB.</p>
+    <span class="install"><b>npm i playthru</b><em>0 deps</em></span>
+  </section>
+
+  <div class="frame">
+    <div class="bar"><i></i><i></i><i></i><span class="url">acme.app/my-issues</span></div>
+    <div id="stage">
+      <div class="app" id="app">
+        <aside class="side">
+          <div class="ws"><i></i>Acme</div>
+          <div class="nav">Inbox <u>3</u></div>
+          <div class="nav on">My issues</div>
+          <div class="nav">Projects</div>
+          <div class="nav">Cycles</div>
+          <div class="nav">Views</div>
+        </aside>
+        <section class="main">
+          <header class="head">
+            <h2>My issues</h2>
+            <button class="btn" id="new-issue">+ New issue</button>
+          </header>
+          <div class="list" id="list"></div>
+        </section>
+
+        <div class="veil" id="veil">
+          <form class="composer" id="composer">
+            <small>ACM › New issue</small>
+            <input id="title" placeholder="Issue title" autocomplete="off" />
+            <textarea placeholder="Add description…"></textarea>
+            <div class="labels">
+              <button type="button" class="chip" data-label="Bug" style="--c:#e5484d">Bug</button>
+              <button type="button" class="chip" data-label="Feature" style="--c:#5b5bd6">Feature</button>
+              <button type="button" class="chip" data-label="Polish" style="--c:#30a46c">Polish</button>
+            </div>
+            <div class="foot"><button type="button" class="btn" id="create">Create issue</button></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="note">This is a real app, not a video. Hover it to take over.</p>
+
+<script type="module">
+  import { playthru } from "../dist/index.js";
+
+  /* ---- a tiny real app ---- */
+  const seed = [
+    ["ACM-128", "Billing page shows stale plan after upgrade", "Bug", "#e5484d", "prog"],
+    ["ACM-127", "Keyboard shortcut sheet", "Feature", "#5b5bd6", ""],
+    ["ACM-125", "Tighten empty state spacing", "Polish", "#30a46c", "done"],
+    ["ACM-121", "Invite flow drops role on resend", "Bug", "#e5484d", ""],
+    ["ACM-119", "Export issues as CSV", "Feature", "#5b5bd6", "prog"],
+    ["ACM-117", "Dark mode contrast on badges", "Polish", "#30a46c", ""],
+    ["ACM-112", "Search ignores archived projects", "Bug", "#e5484d", "done"],
+  ];
+  const colors = { Bug: "#e5484d", Feature: "#5b5bd6", Polish: "#30a46c" };
+  const $ = (s) => document.querySelector(s);
+  const list = $("#list"), veil = $("#veil"), title = $("#title");
+  let next = 129, label = null;
+
+  const row = ([id, ti, lb, c, st], isNew) => {
+    const el = document.createElement("div");
+    el.className = "row" + (isNew ? " is-new" : "");
+    el.innerHTML = `<i class="st ${st}"></i><span class="id">${id}</span><span class="ti"></span><span class="chip" style="--c:${c}">${lb}</span><i class="av"></i>`;
+    el.querySelector(".ti").textContent = ti;
+    return el;
+  };
+  const render = () => { list.replaceChildren(...seed.map((r) => row(r))); next = 129; };
+  const close = () => { veil.classList.remove("open"); label = null; document.querySelectorAll("[data-label]").forEach((b) => b.setAttribute("aria-pressed", "false")); };
+
+  $("#new-issue").addEventListener("click", () => veil.classList.add("open"));
+  document.querySelectorAll("[data-label]").forEach((b) =>
+    b.addEventListener("click", () => {
+      label = b.dataset.label;
+      document.querySelectorAll("[data-label]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    }),
+  );
+  const create = () => {
+    if (!title.value.trim()) return;
+    list.prepend(row([`ACM-${next++}`, title.value, label ?? "Feature", colors[label ?? "Feature"], ""], true));
+    title.value = "";
+    close();
+  };
+  $("#create").addEventListener("click", create);
+  $("#composer").addEventListener("submit", (e) => { e.preventDefault(); create(); });
+  veil.addEventListener("click", (e) => e.target === veil && close());
+  render();
+
+  /* ---- the demo: this is the whole script ---- */
+  const demo = playthru("#stage")
+    .click("#new-issue")
+    .zoom("#composer")
+    .type("#title", "Fix onboarding flicker on Safari")
+    .click('[data-label="Bug"]')
+    .click("#create")
+    .zoomOut()
+    .zoom(".row.is-new")
+    .reset(() => { close(); render(); });
+
+  window.demo = demo;
+</script>
+</body>
+</html>

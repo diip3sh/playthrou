@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>playthru · React</title>
+<script type="importmap">
+{ "imports": {
+  "react": "https://esm.sh/react@19",
+  "react/jsx-runtime": "https://esm.sh/react@19/jsx-runtime",
+  "react-dom/client": "https://esm.sh/react-dom@19/client?deps=react@19"
+} }
+</script>
+<style>
+  body { font: 14px -apple-system, sans-serif; display:grid; place-items:center; min-height:100vh; margin:0; background:#f6f6f8; }
+  .stage { width: 520px; height: 300px; border-radius: 14px; background:#fff; border:1px solid #e7e7ec; }
+  .card { padding: 28px; height: 300px; box-sizing:border-box; }
+  input { width:100%; box-sizing:border-box; font: 15px -apple-system, sans-serif; padding: 10px 12px; border:1px solid #e1e1e8; border-radius:9px; }
+  button { margin-top: 12px; font: 500 13px -apple-system, sans-serif; padding: 9px 14px; border:0; border-radius:9px; background:#16161a; color:#fff; }
+  button[data-playthru-hover] { background:#000; }
+  ul { padding-left: 18px; color:#444; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="module">
+  import { createElement as h, useState } from "react";
+  import { createRoot } from "react-dom/client";
+  import { Playthru } from "../dist/react.js";
+
+  function Todos() {
+    const [text, setText] = useState("");
+    const [items, setItems] = useState(["Ship playthru"]);
+    window.__resetTodos = () => { setItems(["Ship playthru"]); setText(""); };
+    return h("div", { className: "card" },
+      h("input", { id: "todo", placeholder: "What needs doing?", value: text, onChange: (e) => setText(e.target.value) }),
+      h("button", { id: "add", onClick: () => { if (text) { setItems((x) => [text, ...x]); setText(""); } } }, "Add task"),
+      h("ul", null, items.map((t, i) => h("li", { key: t + i, className: i === 0 ? "first" : "" }, t))),
+    );
+  }
+
+  function App() {
+    return h(Playthru, {
+      className: "stage",
+      script: (d) => d.type("#todo", "Record the launch video").click("#add").zoom("li.first").reset(() => window.__resetTodos()),
+    }, h(Todos));
+  }
+  createRoot(document.getElementById("root")).render(h(App));
+</script>
+</body>
+</html>
