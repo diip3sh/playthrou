@@ -1,39 +1,38 @@
 ---
-/** Phosphor icons, the set Kumo is built around, rendered to static SVG. */
+/** The site's icon set (icons.tsx), rendered to static SVG. */
 import {
   ArrowUpRightIcon,
   CheckIcon,
   CopyIcon,
-  GithubLogoIcon,
+  GithubIcon,
   LinkIcon,
   MoonIcon,
   PlusIcon,
   SunIcon,
-  TerminalWindowIcon,
+  TerminalIcon,
   XIcon,
-} from "@phosphor-icons/react/dist/ssr";
+} from "./icons";
 
 const ICONS = {
   "arrow-up-right": ArrowUpRightIcon,
   check: CheckIcon,
   copy: CopyIcon,
-  github: GithubLogoIcon,
+  github: GithubIcon,
   link: LinkIcon,
   moon: MoonIcon,
   plus: PlusIcon,
   sun: SunIcon,
-  terminal: TerminalWindowIcon,
+  terminal: TerminalIcon,
   x: XIcon,
 };
 
 interface Props {
   name: keyof typeof ICONS;
   class?: string;
-  weight?: "regular" | "bold" | "fill";
 }
 
-const { name, class: className, weight = "regular" } = Astro.props;
+const { name, class: className } = Astro.props;
 const Glyph = ICONS[name];
 ---
 
-<Glyph className={className} weight={weight} aria-hidden="true" />
+<Glyph className={className} />

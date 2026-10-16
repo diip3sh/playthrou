@@ -14,7 +14,7 @@ const { label, text } = Astro.props;
 <Button variant="ghost" size="sm" shape="square" className="print:hidden" aria-label={label} data-copy={text}>
   <span class="relative block size-4 text-kumo-subtle transition-colors group-hover:text-kumo-default" aria-hidden="true">
     <Icon name="copy" class={copySwap.copy} />
-    <Icon name="check" weight="bold" class={copySwap.check} />
+    <Icon name="check" class={copySwap.check} />
   </span>
   <span class="sr-only" aria-live="polite" data-copy-status></span>
 </Button>
