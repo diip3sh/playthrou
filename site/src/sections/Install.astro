@@ -3,10 +3,27 @@ import C from "../components/C.astro";
 import CodeCard from "../components/CodeCard.astro";
 import P from "../components/P.astro";
 import Section from "../components/Section.astro";
+import { REPO } from "../lib/links";
+
+const PROMPTS = [
+  "Add a playthru demo of the issue composer to the hero.",
+  "Put a self-playing demo of this page in the landing page, no npm.",
+  "My playthru demo starts the second loop in the wrong state. Fix it.",
+].join("\n");
 ---
 
 <Section id="install" title="Install">
-  <P>Add the package. It has no dependencies and no stylesheet to import.</P>
+  <P>
+    The quickest way is to let your coding agent do it. Add the{" "}
+    <a href={`${REPO}/blob/main/skills/playthru/SKILL.md`} class="article-link">agent skill</a> to your project.
+  </P>
+  <CodeCard title="Agent skill" lang="sh" code="npx skills add diip3sh/playthrou" />
+  <P>
+    Then ask in plain words. The skill tells the agent how playthru works, so it can install it (or load it from a CDN on a
+    plain HTML page), build the stage, write the script and the reset, and mirror your hover styles.
+  </P>
+  <CodeCard title="Prompts" lang="text" code={PROMPTS} />
+  <P>To set it up by hand, add the package. It has no dependencies and no stylesheet to import.</P>
   <CodeCard title="Terminal" lang="sh" code="npm i playthru" />
   <P>Wrap the UI you want to show in a stage, then write the script.</P>
   <CodeCard

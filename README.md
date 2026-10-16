@@ -47,6 +47,16 @@ import { Playthru } from "playthru/react";
 
 Or attach to something you already render: `usePlaythru(ref, script, options)`.
 
+## Let your agent do it
+
+There's an agent skill in [`skills/playthru`](skills/playthru/SKILL.md). Add it, then ask for "a playthru demo of my app". The agent will set it up, with npm or with a plain `<script>` tag.
+
+```sh
+npx skills add diip3sh/playthrou
+```
+
+Or copy `skills/playthru` into your project's `.claude/skills/`.
+
 ## API
 
 | Step | Does |
