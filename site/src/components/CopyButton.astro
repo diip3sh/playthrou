@@ -1,5 +1,6 @@
 ---
-import { copyButton, copySwap } from "../lib/styles";
+import { Button } from "@cloudflare/kumo/components/button";
+import { copySwap } from "../lib/styles";
 import Icon from "./Icon.astro";
 
 interface Props {
@@ -7,25 +8,30 @@ interface Props {
   /** Text to copy. Leave it out to copy the page URL. */
   text?: string;
   copiedLabel?: string;
-  /** Replaces the default look; keep `group` so the icons can swap. */
-  class?: string;
+  variant?: "ghost" | "secondary";
+  size?: "sm" | "base";
+  shape?: "square" | "circle";
   iconClass?: string;
 }
 
-const { label, text, copiedLabel, class: className = `${copyButton} size-7`, iconClass = "size-4" } = Astro.props;
+const { label, text, copiedLabel, variant = "ghost", size = "sm", shape = "square", iconClass = "size-4" } = Astro.props;
 ---
 
-<button
-  type="button"
+<Button
+  variant={variant}
+  size={size}
+  shape={shape}
   aria-label={label}
   data-copy={text}
   data-copy-url={text === undefined ? "" : undefined}
   data-copied-label={copiedLabel}
-  class={className}
 >
-  <span class:list={["relative", iconClass]} aria-hidden="true">
+  <span
+    class:list={["relative block text-kumo-subtle transition-colors group-hover:text-kumo-default", iconClass]}
+    aria-hidden="true"
+  >
     <Icon name="copy" class={copySwap.copy} />
-    <Icon name="check" class={copySwap.check} />
+    <Icon name="check" weight="bold" class={copySwap.check} />
   </span>
   <span class="sr-only" aria-live="polite" data-copy-status></span>
-</button>
+</Button>

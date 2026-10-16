@@ -43,8 +43,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
         </>
       )
     }
-    <meta name="theme-color" content="#fcfcfc" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#101010" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#fbfbfb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#030303" media="(prefers-color-scheme: dark)" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <!-- All code text, including the hero chips above the fold, uses Geist Mono; preloading avoids a swap from the fallback font. -->
     <link rel="preload" href={geistMonoLatin} as="font" type="font/woff2" crossorigin />
@@ -57,12 +57,15 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
           stored = localStorage.getItem("theme");
         } catch {}
         var dark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
-        document.documentElement.dataset.theme = dark ? "dark" : "light";
+        document.documentElement.dataset.mode = dark ? "dark" : "light";
       })();
     </script>
   </head>
   <body>
-    <slot />
+    <!-- Kumo renders popups in a portal at the end of body; isolating the app keeps them above it. -->
+    <div class="isolate">
+      <slot />
+    </div>
     <script>
       import "../scripts/theme";
       import "../scripts/copy";

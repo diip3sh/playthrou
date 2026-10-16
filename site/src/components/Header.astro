@@ -1,28 +1,31 @@
 ---
+import { Button, LinkButton } from "@cloudflare/kumo/components/button";
 import { REPO } from "../lib/links";
-import { iconButton } from "../lib/styles";
 import CopyButton from "./CopyButton.astro";
 import Icon from "./Icon.astro";
 
-// The icons follow `data-theme` through the dark variant, so the toggle needs no client state.
-const swap = "absolute size-[18px] transition-[opacity,scale,filter] duration-200 ease-out";
+// The icons follow `data-mode` through the dark variant, so the toggle needs no client state.
+const swap = "absolute inset-0 size-[18px] transition-[opacity,scale,filter] duration-200 ease-out";
 ---
 
 <header class="flex min-h-9 w-full items-center justify-between gap-2 select-none">
-  <a href={REPO} aria-label="playthru on GitHub" class={iconButton}>
-    <Icon name="github" class="size-4" />
-  </a>
+  <LinkButton href={REPO} aria-label="playthru on GitHub" variant="secondary" shape="circle">
+    <Icon name="github" class="size-[18px]" />
+  </LinkButton>
   <div class="flex items-center gap-2">
-    <button
-      type="button"
-      id="theme-toggle"
-      data-testid="theme-toggle"
-      aria-label="Switch to dark mode"
-      class:list={[iconButton, "relative"]}
-    >
-      <Icon name="moon" class={`${swap} scale-100 opacity-100 blur-[0px] dark:scale-50 dark:opacity-0 dark:blur-[2px]`} />
-      <Icon name="sun" class={`${swap} scale-50 opacity-0 blur-[2px] dark:scale-100 dark:opacity-100 dark:blur-[0px]`} />
-    </button>
-    <CopyButton label="Copy link to this page" copiedLabel="Link copied" class={`group ${iconButton}`} />
+    <Button id="theme-toggle" data-testid="theme-toggle" aria-label="Switch to dark mode" variant="secondary" shape="circle">
+      <span class="relative block size-[18px]" aria-hidden="true">
+        <Icon name="moon" class={`${swap} scale-100 opacity-100 blur-[0px] dark:scale-50 dark:opacity-0 dark:blur-[2px]`} />
+        <Icon name="sun" class={`${swap} scale-50 opacity-0 blur-[2px] dark:scale-100 dark:opacity-100 dark:blur-[0px]`} />
+      </span>
+    </Button>
+    <CopyButton
+      label="Copy link to this page"
+      copiedLabel="Link copied"
+      variant="secondary"
+      size="base"
+      shape="circle"
+      iconClass="size-[18px]"
+    />
   </div>
 </header>

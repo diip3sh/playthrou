@@ -3,6 +3,7 @@ import { highlight, type Lang } from "../lib/highlight";
 import { codeCard, fileBadges } from "../lib/styles";
 import CopyButton from "./CopyButton.astro";
 import Icon from "./Icon.astro";
+import LayeredCard from "./kumo/LayeredCard";
 
 interface Props {
   /** What the copy button copies. Highlighted unless the default slot provides custom rendering. */
@@ -14,10 +15,17 @@ interface Props {
 const { code, title, lang } = Astro.props;
 const badge = lang === "sh" || lang === "text" ? null : fileBadges[lang];
 const custom = Astro.slots.has("default");
+const titleId = `code-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 ---
 
-<figure class={codeCard.root}>
-  <figcaption class={codeCard.header}>
+<LayeredCard
+  role="figure"
+  aria-labelledby={titleId}
+  className="my-8"
+  headerClassName={codeCard.header}
+  bodyClassName="block p-0"
+>
+  <Fragment slot="header">
     <span class="flex min-w-0 items-center gap-2">
       {
         badge ? (
@@ -36,12 +44,12 @@ const custom = Astro.slots.has("default");
             </text>
           </svg>
         ) : (
-          <Icon name="terminal" class="size-4 shrink-0 text-gray-1000" />
+          <Icon name="terminal" class="size-4 shrink-0 text-kumo-subtle" />
         )
       }
-      <span class={codeCard.title}>{title}</span>
+      <span id={titleId} class={codeCard.title}>{title}</span>
     </span>
     <CopyButton text={code} label={`Copy ${title}`} />
-  </figcaption>
+  </Fragment>
   <pre class={codeCard.pre} tabindex="0"><code>{custom ? <slot /> : highlight(code, lang).map(([t, text]) => <span class={`tk-${t}`}>{text}</span>)}</code></pre>
-</figure>
+</LayeredCard>

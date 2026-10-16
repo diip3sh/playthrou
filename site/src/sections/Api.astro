@@ -2,32 +2,32 @@
 import C from "../components/C.astro";
 import P from "../components/P.astro";
 import Section from "../components/Section.astro";
-import { table } from "../lib/styles";
+import RefTable, { type RefRow } from "../components/kumo/RefTable";
 
-const STEPS: Array<{ sig: string[]; what: string }> = [
-  { sig: ["move(target)"], what: "Glides the cursor to an element." },
+const STEPS: RefRow[] = [
+  { code: ["move(target)"], desc: "Glides the cursor to an element." },
   {
-    sig: ["click(target?)"],
-    what: "Glides there, presses, ripples and fires real pointer and click events. Without a target it clicks the last one.",
+    code: ["click(target?)"],
+    desc: "Glides there, presses, ripples and fires real pointer and click events. Without a target it clicks the last one.",
   },
   {
-    sig: ["type(target?, text)"],
-    what: "Clicks the field, then types into it with human timing. Typed fields restore themselves on every loop.",
+    code: ["type(target?, text)"],
+    desc: "Clicks the field, then types into it with human timing. Typed fields restore themselves on every loop.",
   },
-  { sig: ["key(key)"], what: "Fires keydown and keyup on the last target, for example key(\"Enter\")." },
-  { sig: ["zoom(target?)", "zoomOut()"], what: "Pushes the camera in on an element, or the last target, and pulls it back." },
-  { sig: ["wait(ms)"], what: "Holds for a moment." },
-  { sig: ["run(fn)"], what: "Runs your own code as a step, with no pause after it." },
-  { sig: ["reset(fn)"], what: "Runs before every pass, to put your app back where it started." },
-  { sig: ["play()", "pause()", "destroy()"], what: "Controls. destroy() removes the cursor and restores the stage." },
+  { code: ["key(key)"], desc: "Fires keydown and keyup on the last target, for example key(\"Enter\")." },
+  { code: ["zoom(target?)", "zoomOut()"], desc: "Pushes the camera in on an element, or the last target, and pulls it back." },
+  { code: ["wait(ms)"], desc: "Holds for a moment." },
+  { code: ["run(fn)"], desc: "Runs your own code as a step, with no pause after it." },
+  { code: ["reset(fn)"], desc: "Runs before every pass, to put your app back where it started." },
+  { code: ["play()", "pause()", "destroy()"], desc: "Controls. destroy() removes the cursor and restores the stage." },
 ];
 
-const OPTIONS: Array<{ sig: string[]; what: string }> = [
-  { sig: ["loop: true"], what: "Replay forever." },
-  { sig: ["autoplay: true"], what: "Start the first time the stage is 30% in view." },
+const OPTIONS: RefRow[] = [
+  { code: ["loop: true"], desc: "Replay forever." },
+  { code: ["autoplay: true"], desc: "Start the first time the stage is 30% in view." },
   {
-    sig: ["pauseOnHover: true"],
-    what: "A real pointer over the stage pauses the demo and hides the fake cursor, so visitors can try it themselves.",
+    code: ["pauseOnHover: true"],
+    desc: "A real pointer over the stage pauses the demo and hides the fake cursor, so visitors can try it themselves.",
   },
 ];
 ---
@@ -37,23 +37,7 @@ const OPTIONS: Array<{ sig: string[]; what: string }> = [
     <C>playthru(stage, options?)</C> takes a selector or an element and returns a chain. Targets are selectors scoped to the
     stage, or elements. They resolve when the step runs, so a step can target something an earlier step created.
   </P>
-  {
-    [STEPS, OPTIONS].map((rows) => (
-      <div class={table.root}>
-        <dl class={table.list}>
-          {rows.map((row) => (
-            <div class={table.row}>
-              <dt class={table.term}>
-                {row.sig.map((c) => (
-                  <span>{c}</span>
-                ))}
-              </dt>
-              <dd class={table.desc}>{row.what}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-    ))
-  }
+  <RefTable aria-label="Steps" columns={["Step", "What it does"]} rows={STEPS} />
+  <RefTable aria-label="Options" columns={["Option", "What it does"]} rows={OPTIONS} />
   <P>Options say whether, never how. Timing is not an option.</P>
 </Section>

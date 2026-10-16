@@ -1,13 +1,14 @@
 ---
+import { LayerCard } from "@cloudflare/kumo/components/layer-card";
 import C from "../components/C.astro";
 import P from "../components/P.astro";
 import Section from "../components/Section.astro";
-import { card, figure } from "../lib/styles";
+import { figure } from "../lib/styles";
 
 const pill =
-  "flex h-10 items-center justify-center rounded-full bg-preview-bg px-4 font-mono text-lg leading-none font-medium whitespace-nowrap shadow-custom select-none";
+  "flex h-10 items-center justify-center rounded-full bg-kumo-base px-4 font-mono text-lg leading-none font-medium whitespace-nowrap text-kumo-strong shadow-xs ring ring-kumo-line select-none";
 const op =
-  "flex size-10 shrink-0 items-center justify-center rounded-full bg-preview-bg font-mono text-lg leading-none text-gray-1100 shadow-custom select-none";
+  "flex size-10 shrink-0 items-center justify-center rounded-full bg-kumo-base font-mono text-lg leading-none text-kumo-subtle shadow-xs ring ring-kumo-line select-none";
 const beats = ["glide", "settle", "press", "release"];
 ---
 
@@ -17,7 +18,7 @@ const beats = ["glide", "settle", "press", "release"];
     slight arc, rests for a beat so your eye catches up, presses, and lets go.
   </P>
   <figure class={figure}>
-    <div class={card}>
+    <LayerCard className="w-full bg-kumo-elevated">
       <p class="flex w-full flex-col items-center justify-center gap-4 py-16 sm:flex-row sm:gap-2">
         {
           beats.map((b, i) => (
@@ -28,7 +29,7 @@ const beats = ["glide", "settle", "press", "release"];
           ))
         }
       </p>
-    </div>
+    </LayerCard>
   </figure>
   <P>
     The press fires real <C>pointerdown</C>, <C>mousedown</C>, <C>pointerup</C>, <C>mouseup</C> and <C>click</C> events

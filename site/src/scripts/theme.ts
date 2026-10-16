@@ -13,15 +13,15 @@ function stored(): string | null {
 }
 
 function apply(theme: Theme) {
-  root.dataset.theme = theme;
+  root.dataset.mode = theme;
   toggle?.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
 }
 
 // The inline script in the layout already set the theme before first paint.
-apply(root.dataset.theme === "dark" ? "dark" : "light");
+apply(root.dataset.mode === "dark" ? "dark" : "light");
 
 toggle?.addEventListener("click", () => {
-  const next: Theme = root.dataset.theme === "dark" ? "light" : "dark";
+  const next: Theme = root.dataset.mode === "dark" ? "light" : "dark";
   try {
     localStorage.setItem("theme", next);
   } catch {}

@@ -3,17 +3,25 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "npm --prefix .. install --no-audit --no-fund && npm --prefix .. run build",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview --port 4319"
   },
   "dependencies": {
+    "@astrojs/react": "7.1.0",
+    "@cloudflare/kumo": "2.14.0",
     "@fontsource-variable/geist-mono": "5.3.0",
+    "@phosphor-icons/react": "2.1.10",
     "astro": "7.3.8",
-    "playthru": "file:.."
+    "playthru": "file:..",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.3.3",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "tailwindcss": "4.3.3",
     "typescript": "^5.9.3"
   }
