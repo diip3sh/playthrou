@@ -28,6 +28,17 @@ toggle?.addEventListener("click", () => {
   apply(next);
 });
 
+// Dark text tokens would print light-on-white once the browser drops backgrounds, so paper is always light.
+let screenTheme: Theme | null = null;
+window.addEventListener("beforeprint", () => {
+  screenTheme = root.dataset.mode === "dark" ? "dark" : "light";
+  root.dataset.mode = "light";
+});
+window.addEventListener("afterprint", () => {
+  if (screenTheme) root.dataset.mode = screenTheme;
+  screenTheme = null;
+});
+
 // Follow the system until the visitor picks a theme.
 system.addEventListener("change", () => {
   if (!stored()) apply(system.matches ? "dark" : "light");

@@ -17,7 +17,7 @@ const beats = ["glide", "settle", "press", "release"];
     Every step is a small piece of hand motion. A click isn't a jump cut: the cursor travels there in a
     slight arc, rests for a beat so your eye catches up, presses, and lets go.
   </P>
-  <figure class={figure}>
+  <figure class={figure} data-md={beats.map((b) => `\`${b}\``).join(" → ")}>
     <LayerCard className="w-full bg-kumo-elevated">
       <p class="flex w-full flex-col items-center justify-center gap-4 py-16 sm:flex-row sm:gap-2">
         {

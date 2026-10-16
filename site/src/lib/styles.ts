@@ -18,7 +18,7 @@ export const status = {
 };
 
 /**
- * Copy buttons carry `data-copy` (or `data-copy-url`) and are handled by
+ * Copy buttons carry `data-copy` and are handled by
  * scripts/copy.ts, which sets `data-copied` for a moment after a copy. Kumo's
  * Button is a `group`, so its icons swap without any component state.
  */

@@ -43,6 +43,7 @@
     --tk-keyword: color(display-p3 0.995 0.445 0.573);
     --tk-tag: color(display-p3 1 0.567 0.409);
     --tk-attr: color(display-p3 0.461 0.844 0.609);
+    --tk-prop: #7dd3fc;
     --tk-var: color(display-p3 1 0.688 0.419);
     --tk-string: color(display-p3 0.451 0.823 0.447);
     --tk-number: color(display-p3 0.453 0.814 0.989);
@@ -140,6 +141,30 @@
 }
 .tk-component {
   color: var(--tk-component);
+}
+
+@media print {
+  @page {
+    margin: 16mm;
+  }
+  body {
+    background: white;
+  }
+  /* Paper has no horizontal scroll, so long code lines wrap instead of being cut off. */
+  pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  /* Whole tables would leave most of a page blank; keeping rows intact is enough. */
+  pre,
+  figure,
+  tr {
+    break-inside: avoid;
+  }
+  h2,
+  h3 {
+    break-after: avoid;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

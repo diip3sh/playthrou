@@ -13,15 +13,15 @@ import Styling from "../sections/Styling.astro";
 ---
 
 <Layout>
-  <div class="mx-auto max-w-173 px-6 py-12 leading-relaxed sm:py-24">
+  <div class="mx-auto max-w-173 px-6 py-12 leading-relaxed sm:py-24 print:p-0">
     <a
       href="#main"
-      class="sr-only z-50 rounded-full bg-kumo-contrast px-4 py-2 text-sm text-kumo-inverse focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+      class="sr-only z-50 rounded-full bg-kumo-contrast px-4 py-2 text-sm text-kumo-inverse focus:not-sr-only focus:fixed focus:top-3 focus:left-3 print:hidden"
     >
       Skip to content
     </a>
     <Header />
-    <main id="main" class="mt-24">
+    <main id="main" class="mt-24 print:mt-0">
       <Hero />
       <HowItWorks />
       <Install />

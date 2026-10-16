@@ -31,9 +31,13 @@ export default function RefTable({ columns, rows, "aria-label": ariaLabel }: Pro
             <Table.Row key={`${row.label ?? ""}${row.code.join()}`}>
               <Table.Cell>
                 <span className="flex flex-col gap-0.5 font-mono text-[13px] leading-[22px] text-kumo-strong">
-                  {row.label ? <span className="font-sans text-sm font-medium">{row.label}</span> : null}
+                  {row.label ? (
+                    <span data-md-label className="font-sans text-sm font-medium">
+                      {row.label}
+                    </span>
+                  ) : null}
                   {row.code.map((line) => (
-                    <span key={line} className={row.label ? "text-kumo-subtle" : undefined}>
+                    <span key={line} data-md-code className={row.label ? "text-kumo-subtle" : undefined}>
                       {line}
                     </span>
                   ))}

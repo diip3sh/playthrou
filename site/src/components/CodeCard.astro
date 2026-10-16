@@ -51,5 +51,5 @@ const titleId = `code-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
     </span>
     <CopyButton text={code} label={`Copy ${title}`} />
   </Fragment>
-  <pre class={codeCard.pre} tabindex="0"><code>{custom ? <slot /> : highlight(code, lang).map(([t, text]) => <span class={`tk-${t}`}>{text}</span>)}</code></pre>
+  <pre class={codeCard.pre} tabindex="0" data-lang={lang} data-title={title}><code>{custom ? <slot /> : highlight(code, lang).map(([t, text]) => <span class={`tk-${t}`}>{text}</span>)}</code></pre>
 </LayeredCard>

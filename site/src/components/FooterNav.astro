@@ -7,7 +7,11 @@ const title =
   "w-full font-medium text-pretty text-kumo-strong underline decoration-transparent underline-offset-3 transition-colors duration-200 ease-out group-hover:decoration-current";
 ---
 
-<nav aria-label="Project links" class="mt-16 flex w-full items-center justify-between border-t border-kumo-hairline pt-12">
+<nav
+  aria-label="Project links"
+  data-md={`- [playthru on npm](${NPM})\n- [Source on GitHub, MIT licensed](${REPO})`}
+  class="mt-16 flex w-full items-center justify-between border-t border-kumo-hairline pt-12"
+>
   <a class:list={[item, "items-start"]} href={NPM}>
     <span class={label}>Package</span>
     <span class={title}>playthru on npm</span>

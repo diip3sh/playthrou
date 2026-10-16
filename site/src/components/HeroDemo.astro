@@ -49,7 +49,7 @@ const issueTitle = "min-w-0 flex-1 truncate text-kumo-strong";
 const primaryHover = "data-playthru-hover:[&>span[aria-hidden]]:from-(--kumo-button-emphasis-bg)";
 ---
 
-<figure id="hero-demo" class:list={[styles.figure, "group/hero"]}>
+<figure id="hero-demo" class:list={[styles.figure, "group/hero print:hidden"]} data-md="skip">
   <LayeredCard
     className="w-full"
     headerClassName="justify-center py-4"

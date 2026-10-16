@@ -5,31 +5,14 @@ import Icon from "./Icon.astro";
 
 interface Props {
   label: string;
-  /** Text to copy. Leave it out to copy the page URL. */
-  text?: string;
-  copiedLabel?: string;
-  variant?: "ghost" | "secondary";
-  size?: "sm" | "base";
-  shape?: "square" | "circle";
-  iconClass?: string;
+  text: string;
 }
 
-const { label, text, copiedLabel, variant = "ghost", size = "sm", shape = "square", iconClass = "size-4" } = Astro.props;
+const { label, text } = Astro.props;
 ---
 
-<Button
-  variant={variant}
-  size={size}
-  shape={shape}
-  aria-label={label}
-  data-copy={text}
-  data-copy-url={text === undefined ? "" : undefined}
-  data-copied-label={copiedLabel}
->
-  <span
-    class:list={["relative block text-kumo-subtle transition-colors group-hover:text-kumo-default", iconClass]}
-    aria-hidden="true"
-  >
+<Button variant="ghost" size="sm" shape="square" className="print:hidden" aria-label={label} data-copy={text}>
+  <span class="relative block size-4 text-kumo-subtle transition-colors group-hover:text-kumo-default" aria-hidden="true">
     <Icon name="copy" class={copySwap.copy} />
     <Icon name="check" weight="bold" class={copySwap.check} />
   </span>
