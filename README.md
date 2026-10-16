@@ -4,6 +4,8 @@ Your hero demo is a 6 MB MP4. It should be your actual UI.
 
 playthru glides a cursor across your real interface. It clicks, types, and zooms the camera in on what matters, then loops. It stays sharp at any size, works in light or dark, and is never out of date with your product. Zero dependencies, ~4.9 KB gzipped, no stylesheet to import.
 
+![playthru running its demo on a live issue tracker: the cursor opens the composer and types, a real mouse takes over and creates an issue, then the demo resumes and the page switches theme](https://raw.githubusercontent.com/diip3sh/playthrou/main/.github/media/demo.gif)
+
 ```sh
 npm i playthru
 ```
