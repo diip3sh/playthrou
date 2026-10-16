@@ -2,6 +2,7 @@ import { Button } from "@cloudflare/kumo/components/button";
 import { DropdownMenu } from "@cloudflare/kumo/components/dropdown";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { writeClipboard } from "../../lib/clipboard";
+import { SKILL_MD } from "../../lib/links";
 import { pageMarkdown } from "../../lib/page-markdown";
 import { ArrowUpRightIcon, CaretDownIcon, ChatGPTIcon, CheckIcon, ClaudeIcon, CopyIcon, DownloadIcon } from "../icons";
 
@@ -42,7 +43,13 @@ export default function CopyPageMenu({ pageUrl }: Props) {
   // Let the menu finish closing so it isn't captured in the print preview.
   const downloadPdf = () => window.setTimeout(() => window.print(), 150);
 
-  const prompt = encodeURIComponent(`Read ${pageUrl} so I can ask questions about it.`);
+  const prompt = encodeURIComponent(
+    [
+      "I'm looking at playthru, a zero-dependency JavaScript library that plays scripted product demos on a website's real UI: a cursor that clicks and types, and a camera that zooms.",
+      `Read the docs at ${pageUrl} and the guide at ${SKILL_MD}.`,
+      "Then answer my questions using only its real API, with code I can paste. If something isn't covered there, say so instead of guessing.",
+    ].join(" "),
+  );
   const assistants = [
     { name: "ChatGPT", href: `https://chatgpt.com/?hints=search&q=${prompt}`, icon: <ChatGPTIcon className="text-kumo-strong" /> },
     { name: "Claude", href: `https://claude.ai/new?q=${prompt}`, icon: <ClaudeIcon /> },
