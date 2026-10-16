@@ -386,12 +386,21 @@ class Engine implements Playthru {
 
   private hold(reason: string) {
     this.holds.add(reason);
-    if (reason === "hover") this.showCursor(false);
+    if (reason === "hover") {
+      this.showCursor(false);
+      // The visitor's own caret takes over; a drawn one would sit wherever the demo stopped typing.
+      this.caret.classList.remove("on");
+    }
   }
 
   private release(reason: string) {
     this.holds.delete(reason);
-    if (reason === "hover" && this.running) this.showCursor(true);
+    if (reason === "hover" && this.running) {
+      this.showCursor(true);
+      const f = this.focused;
+      if (f && rendered(f)) this.drawCaret(f);
+      else if (f) this.mark(null, "focus");
+    }
   }
 
   private frames(ms: number, onFrame: (t: number) => void, g: Gen) {
@@ -550,6 +559,8 @@ class Engine implements Playthru {
   private async glideTo(target: Target, g: Gen): Promise<boolean> {
     const el = this.find(target);
     await this.yieldToPage(g);
+    // A field that left the screen takes its drawn caret with it.
+    if (this.focused && !rendered(this.focused)) this.mark(null, "focus");
     if (!rendered(el)) return false;
     if (this.last !== el) this.mark(null, "hover");
     this.last = el;
@@ -698,7 +709,10 @@ class Engine implements Playthru {
       await this.sleep(ms, g);
       await this.yieldToPage(g);
       // The UI closed the field, or a visitor typed in it: stop rather than type over them.
-      if (!rendered(el) || readValue(el) !== value) break;
+      if (!rendered(el) || readValue(el) !== value) {
+        this.mark(null, "focus");
+        break;
+      }
       el.dispatchEvent(new KeyboardEvent("keydown", { key: ch, bubbles: true, cancelable: true }));
       value += ch;
       writeValue(el, value, ch);
