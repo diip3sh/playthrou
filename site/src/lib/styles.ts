@@ -22,7 +22,8 @@ export const status = {
  * scripts/copy.ts, which sets `data-copied` for a moment after a copy. Kumo's
  * Button is a `group`, so its icons swap without any component state.
  */
-const swap = "absolute inset-0 transition-[opacity,scale,filter] duration-200 ease-out";
+// `size-full` matters: Phosphor icons default to 1em, which would pin a smaller glyph to the top-left corner.
+const swap = "absolute inset-0 size-full transition-[opacity,scale,filter] duration-200 ease-out";
 export const copySwap = {
   copy: `${swap} scale-100 opacity-100 blur-[0px] group-data-copied:scale-50 group-data-copied:opacity-0 group-data-copied:blur-[2px]`,
   check: `${swap} scale-50 opacity-0 blur-[2px] group-data-copied:scale-100 group-data-copied:opacity-100 group-data-copied:blur-[0px]`,
