@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from "motion/react";
+import { AnimatePresence, animate, motion, useReducedMotion, useScroll, useSpring } from "motion/react";
 import * as React from "react";
 import { cx } from "../lib/cx";
 
@@ -34,8 +34,9 @@ const ScrollProgress = ({ className, sections = [], containerRef, offset = 120, 
   const [activeId, setActiveId] = React.useState(sections[0]?.id);
   const [open, setOpen] = React.useState(false);
 
+  // While a jump is animating, the active section is the target, not whatever the page passes on the way.
   const scrollLock = React.useRef(false);
-  const scrollLockTimer = React.useRef<ReturnType<typeof setTimeout>>(undefined);
+  const scrollAnim = React.useRef<ReturnType<typeof animate>>(undefined);
 
   React.useEffect(() => {
     const scroller = containerRef?.current ?? window;
@@ -59,7 +60,8 @@ const ScrollProgress = ({ className, sections = [], containerRef, offset = 120, 
     };
   }, [sections, containerRef, offset]);
 
-  const label = sections.find((s) => s.id === activeId)?.label;
+  const activeIndex = sections.findIndex((s) => s.id === activeId);
+  const label = sections[activeIndex]?.label;
 
   const labelVersion = React.useRef(0);
   const prevLabel = React.useRef(label);
@@ -120,23 +122,50 @@ const ScrollProgress = ({ className, sections = [], containerRef, offset = 120, 
     };
   }, [open]);
 
-  React.useEffect(() => () => clearTimeout(scrollLockTimer.current), []);
+  const endJump = React.useCallback(() => {
+    scrollAnim.current?.stop();
+    scrollAnim.current = undefined;
+    scrollLock.current = false;
+  }, []);
+
+  // A wheel, touch or key press mid-jump hands the scroll back to the reader.
+  React.useEffect(() => {
+    const interrupt = () => scrollAnim.current && endJump();
+    const events = ["wheel", "touchstart", "keydown"] as const;
+    for (const e of events) window.addEventListener(e, interrupt, { passive: true });
+    return () => {
+      for (const e of events) window.removeEventListener(e, interrupt);
+      endJump();
+    };
+  }, [endJump]);
 
   const selectSection = (id: string) => {
-    scrollLock.current = true;
-    clearTimeout(scrollLockTimer.current);
-    scrollLockTimer.current = setTimeout(
-      () => {
-        scrollLock.current = false;
-      },
-      reduceMotion ? 0 : 700,
-    );
-
+    const target = document.getElementById(id);
+    if (!target) return;
     setActiveId(id);
     setOpen(false);
-    document.getElementById(id)?.scrollIntoView({
-      behavior: reduceMotion ? "auto" : "smooth",
-      block: "start",
+
+    const box = containerRef?.current;
+    const scroller = box ?? window;
+    const from = box ? box.scrollTop : window.scrollY;
+    const max = box ? box.scrollHeight - box.clientHeight : document.documentElement.scrollHeight - window.innerHeight;
+    const top =
+      target.getBoundingClientRect().top -
+      (box?.getBoundingClientRect().top ?? 0) +
+      from -
+      (Number.parseFloat(getComputedStyle(target).scrollMarginTop) || 0);
+    const to = Math.min(Math.max(top, 0), max);
+    // "instant" so a page-wide `scroll-behavior: smooth` doesn't smooth every frame of the tween.
+    const scrollTo = (y: number) => scroller.scrollTo({ top: y, behavior: "instant" });
+
+    endJump();
+    if (reduceMotion) return scrollTo(to);
+    scrollLock.current = true;
+    scrollAnim.current = animate(from, to, {
+      duration: Math.min(0.5 + Math.abs(to - from) / 5000, 1),
+      ease: EASE_IN_OUT,
+      onUpdate: scrollTo,
+      onComplete: endJump,
     });
   };
 
@@ -201,6 +230,7 @@ const ScrollProgress = ({ className, sections = [], containerRef, offset = 120, 
               >
                 {sections.map((s, i) => {
                   const isActive = s.id === activeId;
+                  const isPassed = i <= activeIndex;
                   return (
                     <li key={s.id}>
                       <button
@@ -217,6 +247,16 @@ const ScrollProgress = ({ className, sections = [], containerRef, offset = 120, 
                             layoutId={`${layoutId}-active`}
                             className={cx("absolute inset-0 rounded-[14px] bg-kumo-contrast/10", squircle)}
                             transition={reduceMotion ? { duration: 0 } : SIZE_SPRING}
+                          />
+                        )}
+                        {i > 0 && (
+                          // Joins this dot to the one above, 2px clear of each, once the reader has reached it.
+                          <span
+                            aria-hidden
+                            className={cx(
+                              "absolute bottom-[calc(50%+5px)] left-[14.5px] h-[calc(100%-10px)] w-px origin-top bg-kumo-contrast/30 transition-transform duration-300 ease-(--ease-smooth) motion-reduce:transition-none",
+                              isPassed ? "scale-y-100" : "scale-y-0",
+                            )}
                           />
                         )}
                         <motion.span
