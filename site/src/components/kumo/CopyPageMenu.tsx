@@ -2,9 +2,9 @@ import { Button } from "@cloudflare/kumo/components/button";
 import { DropdownMenu } from "@cloudflare/kumo/components/dropdown";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { writeClipboard } from "../../lib/clipboard";
-import { SKILL_MD } from "../../lib/links";
+import { ONTO, SKILL_MD } from "../../lib/links";
 import { pageMarkdown } from "../../lib/page-markdown";
-import { ArrowUpRightIcon, CaretDownIcon, ChatGPTIcon, CheckIcon, ClaudeIcon, CopyIcon, DownloadIcon } from "../icons";
+import { ArrowUpRightIcon, CaretDownIcon, ChatGPTIcon, CheckIcon, ClaudeIcon, CopyIcon, OntoIcon } from "../icons";
 
 interface Props {
   /** Canonical URL of this page: the Markdown cites it and the assistant is pointed at it. */
@@ -39,9 +39,6 @@ export default function CopyPageMenu({ pageUrl }: Props) {
     window.clearTimeout(timer.current);
     timer.current = window.setTimeout(() => setCopied(false), RESET_MS);
   };
-
-  // Let the menu finish closing so it isn't captured in the print preview.
-  const downloadPdf = () => window.setTimeout(() => window.print(), 150);
 
   const prompt = encodeURIComponent(
     [
@@ -92,9 +89,19 @@ export default function CopyPageMenu({ pageUrl }: Props) {
             />
           </DropdownMenu.LinkItem>
         ))}
-        <DropdownMenu.Item className="px-2 py-2" onClick={downloadPdf}>
-          <Action icon={<DownloadIcon />} title="Download PDF" description="Download this page as a PDF" />
-        </DropdownMenu.Item>
+        <DropdownMenu.LinkItem className="px-2 py-2" href={ONTO} target="_blank" rel="noopener noreferrer">
+          <Action
+            icon={<OntoIcon />}
+            title={
+              <>
+                Onto
+                <ArrowUpRightIcon className="size-3.5 text-kumo-subtle" />
+                <span className="sr-only">(opens in a new tab)</span>
+              </>
+            }
+            description="Read with Onto"
+          />
+        </DropdownMenu.LinkItem>
       </DropdownMenu.Content>
     </DropdownMenu>
   );

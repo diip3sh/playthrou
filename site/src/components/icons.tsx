@@ -42,6 +42,22 @@ export function ClaudeIcon(props: IconProps) {
   );
 }
 
+/** Onto's mark: eight rounded squares in a ring, kept in its orange. */
+export function OntoIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 58 58" fill="#F73F01" aria-hidden="true" {...props}>
+      <rect x="15" y="0" width="13" height="13" rx="2.6" />
+      <rect x="30" y="0" width="13" height="13" rx="2.6" />
+      <rect x="0" y="15" width="13" height="13" rx="2.6" />
+      <rect x="45" y="15" width="13" height="13" rx="2.6" />
+      <rect x="0" y="30" width="13" height="13" rx="2.6" />
+      <rect x="45" y="30" width="13" height="13" rx="2.6" />
+      <rect x="15" y="45" width="13" height="13" rx="2.6" />
+      <rect x="30" y="45" width="13" height="13" rx="2.6" />
+    </svg>
+  );
+}
+
 export function CheckIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 16 16" {...line} strokeWidth={2} {...props}>
@@ -55,14 +71,6 @@ export function CopyIcon(props: IconProps) {
     <svg viewBox="0 0 16 16" {...line} {...props}>
       <rect x="5.25" y="5.25" width="8.5" height="8.5" rx="2" />
       <path d="M10.75 5.25V3.75a1.5 1.5 0 0 0-1.5-1.5h-5.5a1.5 1.5 0 0 0-1.5 1.5v5.5a1.5 1.5 0 0 0 1.5 1.5h1.5" />
-    </svg>
-  );
-}
-
-export function DownloadIcon(props: IconProps) {
-  return (
-    <svg viewBox="0 0 16 16" {...line} {...props}>
-      <path d="M8 2.25v7.5m-3.25-3 3.25 3.25 3.25-3.25M2.25 10.25v1.5a2 2 0 0 0 2 2h7.5a2 2 0 0 0 2-2v-1.5" {...round} />
     </svg>
   );
 }
