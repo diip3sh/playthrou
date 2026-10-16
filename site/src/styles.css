@@ -1,5 +1,7 @@
 /* Kumo must come before Tailwind so its theme tokens register first. Tailwind skips node_modules, hence @source. */
 @source "../node_modules/@cloudflare/kumo/dist/**/*.{js,jsx,ts,tsx}";
+/* The Hairline page in brand/ is standalone and carries its own styles. */
+@source not "../brand";
 @import "@cloudflare/kumo/styles/tailwind";
 @import "tailwindcss";
 

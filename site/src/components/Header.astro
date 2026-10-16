@@ -2,6 +2,7 @@
 import { Button, LinkButton } from "@cloudflare/kumo/components/button";
 import { REPO } from "../lib/links";
 import Icon from "./Icon.astro";
+import Logo from "./Logo.astro";
 import CopyPageMenu from "./kumo/CopyPageMenu";
 
 const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
@@ -11,10 +12,18 @@ const swap = "absolute inset-0 size-[18px] transition-[opacity,scale,filter] dur
 ---
 
 <header class="flex min-h-9 w-full items-center justify-between gap-2 select-none print:hidden">
-  <LinkButton href={REPO} aria-label="playthru on GitHub" variant="secondary" shape="circle">
-    <Icon name="github" class="size-[18px]" />
-  </LinkButton>
+  <a
+    href="/"
+    aria-label="playthru home"
+    class="-ml-1 flex items-center gap-1.5 rounded-lg pr-1 text-base font-semibold tracking-tight text-kumo-strong"
+  >
+    <Logo class="size-9" />
+    <span class="hidden sm:inline">playthru</span>
+  </a>
   <div class="flex items-center gap-2">
+    <LinkButton href={REPO} aria-label="playthru on GitHub" variant="secondary" shape="circle">
+      <Icon name="github" class="size-[18px]" />
+    </LinkButton>
     <Button id="theme-toggle" data-testid="theme-toggle" aria-label="Switch to dark mode" variant="secondary" shape="circle">
       <span class="relative block size-[18px]" aria-hidden="true">
         <Icon name="moon" class={`${swap} scale-100 opacity-100 blur-[0px] dark:scale-50 dark:opacity-0 dark:blur-[2px]`} />

@@ -1,0 +1,37 @@
+---
+/**
+ * The playthru mark: the Hairline "Press" figure (brand/press.js) at rest,
+ * cropped to the cursor and its key. The paths are copied from that figure's
+ * rest pose; rebuild them from it rather than editing them by hand.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+
+const paths = {
+  key: "M158.19 193.3L168.4 175.56L169.23 174.28L170.81 173.19L193.92 161.64L196.1 160.85L198.65 160.43L201.35 160.43L203.9 160.85L206.08 161.64L229.19 173.19L230.77 174.28L231.6 175.56L241.81 193.3L241.81 194.91L240.82 196.45L238.92 197.75L207.3 213.57L204.69 214.51L201.61 215.01L198.39 215.01L195.31 214.51L192.7 213.57L161.08 197.75L159.18 196.45L158.19 194.91Z",
+  keyCrease:
+    "M228.4 176.69L227.83 177.56L226.76 178.3L204.14 189.61L202.65 190.15L200.91 190.43L199.09 190.43L197.35 190.15L195.86 189.61L173.24 178.3L172.17 177.56L171.6 176.69",
+  back: "M203.28 171.44L202.84 171.63L202.61 171.48L202.58 170.98L211.6 94.54L211.81 93.83L212.18 93.73L212.73 94.24L227.98 113.91L228.45 114.32L228.89 114.3L229.29 113.85L243.7 88.79L244.25 88.16L244.93 88L245.73 88.31L256.19 94.98L256.81 95.58L256.99 96.28L256.71 97.09L242.38 121.65L242.18 122.23L242.37 122.63L242.94 122.85L266.82 126.73L267.51 126.95L267.59 127.31L267.08 127.8Z",
+  face: "M200.81 172.44L200.37 172.64L200.14 172.48L200.12 171.98L209.14 95.54L209.34 94.83L209.72 94.73L210.26 95.24L225.51 114.91L225.99 115.33L226.42 115.31L226.83 114.85L241.23 89.79L241.79 89.16L242.47 89L243.26 89.31L253.72 95.98L254.35 96.58L254.53 97.28L254.25 98.09L239.92 122.65L239.72 123.23L239.91 123.63L240.48 123.85L264.36 127.73L265.04 127.95L265.13 128.31L264.61 128.8Z",
+};
+
+// Plates are filled with the page colour so the cursor hides the key behind it, as in the figure.
+const plate = "fill-kumo-canvas";
+---
+
+<svg
+  viewBox="146.9 85.5 132 132"
+  class={className}
+  aria-hidden="true"
+  stroke-width="1.25"
+  stroke-linejoin="round"
+  stroke-linecap="round"
+>
+  <path d={paths.key} class={`${plate} stroke-(--text-color-kumo-subtle)`} vector-effect="non-scaling-stroke" />
+  <path d={paths.keyCrease} class="fill-none stroke-kumo-line" vector-effect="non-scaling-stroke" />
+  <path d={paths.back} class={`${plate} stroke-kumo-line`} vector-effect="non-scaling-stroke" />
+  <path d={paths.face} class={`${plate} stroke-(--text-color-kumo-strong)`} vector-effect="non-scaling-stroke" />
+</svg>
