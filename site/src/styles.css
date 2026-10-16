@@ -16,6 +16,22 @@
   --ease-smooth: cubic-bezier(0.2, 0, 0, 1);
 }
 
+/*
+ * The page colour matches the concentric docs site: #fcfcfc light, #101010 dark. Kumo's dark surfaces
+ * sit just above near-black, so they move up with the page to keep cards raised above it. Kumo sets
+ * these tokens as unlayered light-dark() values on :root, so the overrides must be unlayered too, and
+ * come after it.
+ */
+:root {
+  --color-kumo-canvas: #fcfcfc;
+}
+:root[data-mode="dark"] {
+  --color-kumo-canvas: #101010;
+  --color-kumo-elevated: #141414;
+  --color-kumo-recessed: #171717;
+  --color-kumo-base: #191919;
+}
+
 @layer base {
   /* Astro wraps slot content passed to React components in these; they must not affect layout. */
   astro-slot,
