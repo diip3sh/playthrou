@@ -3,7 +3,7 @@ import { DropdownMenu } from "@cloudflare/kumo/components/dropdown";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { writeClipboard } from "../../lib/clipboard";
 import { pageMarkdown } from "../../lib/page-markdown";
-import { ArrowUpRightIcon, CaretDownIcon, CheckIcon, CopyIcon, DownloadIcon, SparkleIcon } from "../icons";
+import { ArrowUpRightIcon, CaretDownIcon, ChatGPTIcon, CheckIcon, ClaudeIcon, CopyIcon, DownloadIcon } from "../icons";
 
 interface Props {
   /** Canonical URL of this page: the Markdown cites it and the assistant is pointed at it. */
@@ -42,9 +42,11 @@ export default function CopyPageMenu({ pageUrl }: Props) {
   // Let the menu finish closing so it isn't captured in the print preview.
   const downloadPdf = () => window.setTimeout(() => window.print(), 150);
 
-  const ask = `https://chatgpt.com/?hints=search&q=${encodeURIComponent(
-    `Read ${pageUrl} so I can ask questions about it.`,
-  )}`;
+  const prompt = encodeURIComponent(`Read ${pageUrl} so I can ask questions about it.`);
+  const assistants = [
+    { name: "ChatGPT", href: `https://chatgpt.com/?hints=search&q=${prompt}`, icon: <ChatGPTIcon className="text-kumo-strong" /> },
+    { name: "Claude", href: `https://claude.ai/new?q=${prompt}`, icon: <ClaudeIcon /> },
+  ];
 
   // Hover opens the menu for pointers; a click or Enter, Space or ArrowDown opens it for touch and keyboard.
   return (
@@ -64,23 +66,25 @@ export default function CopyPageMenu({ pageUrl }: Props) {
           </Button>
         }
       />
-      <DropdownMenu.Content align="end" className="w-80 max-w-[calc(100vw-2rem)] rounded-xl p-1.5">
+      <DropdownMenu.Content align="end" className="w-80 max-w-[calc(100vw-2rem)] rounded-xl p-1.5 outline-none">
         <DropdownMenu.Item className="px-2 py-2" onClick={copyPage}>
           <Action icon={<CopyIcon />} title="Copy page" description="Copy page as Markdown for LLMs" />
         </DropdownMenu.Item>
-        <DropdownMenu.LinkItem className="px-2 py-2" href={ask} target="_blank" rel="noopener noreferrer">
-          <Action
-            icon={<SparkleIcon />}
-            title={
-              <>
-                Ask Assistant
-                <ArrowUpRightIcon className="size-3.5 text-kumo-subtle" />
-                <span className="sr-only">(opens in a new tab)</span>
-              </>
-            }
-            description="Ask ChatGPT questions about this page"
-          />
-        </DropdownMenu.LinkItem>
+        {assistants.map(({ name, href, icon }) => (
+          <DropdownMenu.LinkItem key={name} className="px-2 py-2" href={href} target="_blank" rel="noopener noreferrer">
+            <Action
+              icon={icon}
+              title={
+                <>
+                  Ask {name}
+                  <ArrowUpRightIcon className="size-3.5 text-kumo-subtle" />
+                  <span className="sr-only">(opens in a new tab)</span>
+                </>
+              }
+              description={`Ask ${name} questions about this page`}
+            />
+          </DropdownMenu.LinkItem>
+        ))}
         <DropdownMenu.Item className="px-2 py-2" onClick={downloadPdf}>
           <Action icon={<DownloadIcon />} title="Download PDF" description="Download this page as a PDF" />
         </DropdownMenu.Item>
