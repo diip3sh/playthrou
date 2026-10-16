@@ -1,5 +1,6 @@
 ---
 import "@fontsource-variable/geist-mono";
+import Analytics from "@vercel/analytics/astro";
 import geistMonoLatin from "@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url";
 import "../styles.css";
 
@@ -66,6 +67,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     <div class="isolate">
       <slot />
     </div>
+    <Analytics />
     <script>
       import "../scripts/theme";
       import "../scripts/copy";
