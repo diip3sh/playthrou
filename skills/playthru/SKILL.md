@@ -139,4 +139,4 @@ In Tailwind, use them as variants: `hover:bg-gray-200 data-playthru-hover:bg-gra
 
 Open the page: start the project's dev server, or for plain HTML serve the folder with `npx serve` or any static server, because ES modules don't load from `file://`. Scroll the stage into view and watch one full loop, then a second to confirm `reset` restores the start state. Check the browser console for `playthru:` errors.
 
-Docs: https://playthru.vercel.app
+Docs: https://playthrou.diip3sh.xyz
