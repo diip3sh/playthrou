@@ -1,5 +1,6 @@
-import { LayerCard } from "@cloudflare/kumo/components/layer-card";
 import type { ReactNode } from "react";
+import { cx } from "../../lib/cx";
+import { card, panel } from "../../lib/styles";
 
 interface Props {
   /** Astro passes named slots as props: `<div slot="header">` lands here. */
@@ -16,13 +17,9 @@ interface Props {
 }
 
 /**
- * Kumo's layered card: an elevated frame with an optional strip above and below
- * a raised body. LayerCard only switches to its layered look when Primary and
- * Secondary are its direct React children, so the layers are composed here
- * rather than in Astro, where slot content arrives as static HTML.
- *
- * Secondary tucks under Primary with `-my-2`. The footer strip has nothing below
- * it to tuck under, so it resets that margin or its bottom edge gets clipped.
+ * The concentric site's card: one flat surface, with an optional toolbar inset 4px
+ * from its top and bottom edges. The toolbars bring no padding of their own, so
+ * each caller sets it.
  */
 export default function LayeredCard({
   header,
@@ -35,12 +32,10 @@ export default function LayeredCard({
   ...rest
 }: Props) {
   return (
-    <LayerCard className={className} {...rest}>
-      {header ? <LayerCard.Secondary className={headerClassName}>{header}</LayerCard.Secondary> : null}
-      <LayerCard.Primary className={bodyClassName}>{children}</LayerCard.Primary>
-      {footer ? (
-        <LayerCard.Secondary className={footerClassName ? `my-0 ${footerClassName}` : "my-0"}>{footer}</LayerCard.Secondary>
-      ) : null}
-    </LayerCard>
+    <div className={cx(card, className)} {...rest}>
+      {header ? <div className={cx(panel.base, panel.top, headerClassName)}>{header}</div> : null}
+      <div className={cx("w-full", bodyClassName)}>{children}</div>
+      {footer ? <div className={cx(panel.base, panel.bottom, footerClassName)}>{footer}</div> : null}
+    </div>
   );
 }

@@ -8,6 +8,17 @@ export const paragraph = "w-full text-kumo-default";
 export const figure = "my-8 flex w-full flex-col items-center gap-4";
 export const caption = "text-center text-sm text-pretty text-kumo-subtle";
 
+/** Matches the concentric site's cards: white (#191919 dark) with a hairline shadow in place of a border. */
+export const card =
+  "flex w-full flex-col items-center rounded-2xl bg-kumo-base shadow-[0_0_0_1px_#0000000f,0_1px_2px_-1px_#0000000f,0_2px_4px_0_#0000000a] dark:shadow-[0_0_0_1px_#ffffff14]";
+
+/** Inset toolbar at the top or bottom of a card. Its 12px radius is the card's 16px, 4px in. */
+export const panel = {
+  base: "mx-1 flex items-center self-stretch rounded-xl border border-kumo-hairline bg-kumo-elevated",
+  top: "mt-1",
+  bottom: "mb-1",
+};
+
 export const status = {
   ring: "flex size-7 items-center justify-center rounded-full",
   ringOk: "bg-kumo-info-tint",
@@ -30,8 +41,7 @@ export const copySwap = {
 };
 
 export const codeCard = {
-  /** Kumo tucks this strip 8px under the body, so the vertical padding reads as 6px. */
-  header: "justify-between py-3.5 pr-2 pl-3",
+  header: "justify-between gap-2 py-1.5 pr-1.5 pl-3",
   title: "truncate font-mono text-sm font-normal text-kumo-subtle",
   /** Focusable so long lines can be scrolled with the keyboard; the ring sits inside because the card clips. */
   pre: "overflow-x-auto overscroll-x-contain p-3 font-mono text-[13px] leading-[1.625] text-kumo-strong focus-visible:-outline-offset-2",
