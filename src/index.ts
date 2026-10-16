@@ -143,6 +143,14 @@ function writeValue(el: Element, value: string, data: string | null) {
 
 const readValue = (el: Element) => (isField(el) ? el.value : el.textContent ?? "");
 
+/** Open menus, listboxes and popovers, found by the ARIA state every popup library sets on its trigger. */
+const OPEN_POPUP = '[aria-expanded="true"]:is([aria-haspopup]:not([aria-haspopup="false"]),[role="combobox"])';
+let popupQuery: string | undefined;
+function openPopups(): Element[] {
+  popupQuery ??= globalThis.CSS?.supports?.("selector(:popover-open)") ? `${OPEN_POPUP},:popover-open` : OPEN_POPUP;
+  return Array.from(document.querySelectorAll(popupQuery));
+}
+
 /* ------------------------------------------------------------------ */
 
 class Engine implements Playthru {
@@ -238,6 +246,7 @@ class Engine implements Playthru {
   key(key: string) {
     this.steps.push(async (g) => {
       const el = this.need();
+      await this.yieldToPage(g);
       for (const t of ["keydown", "keyup"]) {
         el.dispatchEvent(new KeyboardEvent(t, { key, bubbles: true, cancelable: true }));
       }
@@ -350,6 +359,7 @@ class Engine implements Playthru {
   }
 
   private async rewind(g: Gen) {
+    await this.yieldToPage(g);
     this.mark(null, "hover");
     this.mark(null, "focus");
     const back = this.reduced ? Promise.resolve() : this.camTo({ s: 1, x: 0, y: 0 }, N.zoom, g);
@@ -396,6 +406,26 @@ class Engine implements Playthru {
 
   private sleep(ms: number, g: Gen) {
     return this.frames(ms, () => {}, g);
+  }
+
+  /**
+   * Synthetic events reach the whole page, and outside-press handlers listen on the document in the
+   * capture phase, before anything here could stop them. So while a popup outside the stage is open,
+   * the demo holds instead of sending input that would dismiss it.
+   */
+  private async yieldToPage(g: Gen) {
+    const blocked = () => openPopups().some((el) => !this.stage.contains(el));
+    if (!blocked()) return;
+    this.hold("popup");
+    try {
+      // Polled on a timer, not the frame clock, because the clock is frozen by the hold.
+      while (blocked()) {
+        await new Promise((r) => setTimeout(r, 150));
+        if (g !== this.gen) throw CANCEL;
+      }
+    } finally {
+      this.release("popup");
+    }
   }
 
   /* ---------- geometry ---------- */
@@ -507,6 +537,7 @@ class Engine implements Playthru {
 
   private async glideTo(target: Target, g: Gen) {
     const el = this.find(target);
+    await this.yieldToPage(g);
     if (this.last !== el) this.mark(null, "hover");
     this.last = el;
     this.showCursor(true);
@@ -536,6 +567,7 @@ class Engine implements Playthru {
     }
 
     await Promise.all([this.glide(to, g), pan]);
+    await this.yieldToPage(g);
     this.mark(el, "hover");
     const c = this.toClient(to);
     for (const t of ["pointerover", "pointerenter", "mouseover", "mouseenter", "pointermove", "mousemove"]) this.fire(el, t, c);
@@ -570,6 +602,7 @@ class Engine implements Playthru {
   }
 
   private async press(el: Element, g: Gen) {
+    await this.yieldToPage(g);
     const c = this.toClient(this.pos);
     this.fire(el, "pointerdown", c);
     this.fire(el, "mousedown", c);
@@ -649,6 +682,7 @@ class Engine implements Playthru {
       if (prev === " ") ms += N.keyAfterSpace;
       if (/[,.!?;:]/.test(prev)) ms += N.keyAfterPunct;
       await this.sleep(ms, g);
+      await this.yieldToPage(g);
       el.dispatchEvent(new KeyboardEvent("keydown", { key: ch, bubbles: true, cancelable: true }));
       value += ch;
       writeValue(el, value, ch);

@@ -2,7 +2,7 @@
 
 Your hero demo is a 6 MB MP4. It should be your actual UI.
 
-playthru glides a cursor across your real interface. It clicks, types, and zooms the camera in on what matters, then loops. It stays sharp at any size, works in light or dark, and is never out of date with your product. Zero dependencies, ~4.6 KB gzipped, no stylesheet to import.
+playthru glides a cursor across your real interface. It clicks, types, and zooms the camera in on what matters, then loops. It stays sharp at any size, works in light or dark, and is never out of date with your product. Zero dependencies, ~4.9 KB gzipped, no stylesheet to import.
 
 ```sh
 npm i playthru
@@ -99,6 +99,7 @@ The numbers are the product. Each one is a decision you no longer have to make.
 - **Real events.** Your app's own handlers run. Hovered elements get `[data-playthru-hover]` and the field being typed in gets `[data-playthru-focus]`, so you can mirror `:hover` and `:focus` styles: `.btn:hover, .btn[data-playthru-hover] { … }`.
 - **It never steals focus.** The page keeps real keyboard focus. playthru draws its own caret instead.
 - **It never navigates.** Clicks on links and submit buttons have their default action prevented. Your click handlers still run.
+- **It never closes your menus.** playthru's events reach the whole page, so a menu's "click outside to close" handler would see them. While a menu, listbox or popover outside the stage is open, the demo pauses and picks up again once it closes. It detects popups by `aria-expanded="true"` on a trigger with `aria-haspopup` (or a combobox) and by the native `:popover-open` state, which Radix, Base UI, Headless UI, React Aria and MUI all set. A hand-rolled popup without either should ignore events where `event.isTrusted` is `false`.
 - **Pausable clock.** Everything runs on one frame clock, so hover, scrolling it off screen, or a background tab freezes it mid-motion, and it resumes exactly where it was.
 - **Reduced motion.** With `prefers-reduced-motion`, the cursor jumps instead of gliding, the camera never moves, and loops cut without fades.
 - **The stage.** Your stage gets `overflow: hidden`. Its single child becomes the "scene" that the camera moves. If there are several children, they're wrapped (and unwrapped on `destroy()`).
@@ -119,5 +120,9 @@ npm install
 npm run dev     # builds, serves examples at http://localhost:5178
 npm run size
 ```
+
+## Release
+
+Run `npm run changeset` to describe a change. On `main`, the Release workflow opens a "Version packages" pull request; merging it publishes to npm with provenance through npm trusted publishing.
 
 MIT

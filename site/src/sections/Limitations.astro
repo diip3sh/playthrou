@@ -14,6 +14,12 @@ import Section from "../components/Section.astro";
       Clicks on links and submit buttons have their default action prevented, so a demo never navigates. Handle the click
       in your code if it should do something.
     </Li>
+    <Li>
+      The demo's events reach the whole page. While a menu, listbox or popover outside the stage is open, the demo pauses
+      so its clicks can't close it. Popups are found by <C>aria-expanded="true"</C> on their trigger or by <C
+        >:popover-open</C
+      >. A custom popup with neither should ignore events where <C>event.isTrusted</C> is false.
+    </Li>
     <Li>Your app state is yours to reset. Typed fields restore themselves; everything else goes in <C>reset()</C>.</Li>
   </ul>
   <P>
